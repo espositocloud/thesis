@@ -1,0 +1,6 @@
+thesis:
+  image: kobe25/thesis:latest
+  volumes:
+    - .:/code:rw
+  command:
+    - /code/build.sh
