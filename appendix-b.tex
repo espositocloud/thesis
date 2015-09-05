@@ -1,0 +1,1327 @@
+\chapter{Source code}\label{source-code}
+
+\section{Gasista Felice}\label{gasista-felice}
+
+\subsection{Dockerfile of NGiNX base
+image}\label{dockerfile-of-nginx-base-image}
+
+\begin{verbatim}
+FROM nginx:1.9
+
+MAINTAINER Antonio Esposito "kobe@befair.it"
+
+RUN rm -rf /etc/nginx/conf.d/*
+COPY nginx.conf /etc/nginx/nginx.conf
+\end{verbatim}
+
+\subsection{NGiNX base configuration
+file}\label{nginx-base-configuration-file}
+
+\begin{verbatim}
+user  nginx;
+worker_processes  1;
+error_log  stderr warn;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$msec] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /dev/stdout  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    server_tokens            off;
+    server_name_in_redirect  off;
+    port_in_redirect         off;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+\end{verbatim}
+
+\subsection{Proxy's Dockerfile}\label{proxys-dockerfile}
+
+\begin{verbatim}
+FROM kobe25/nginx:latest
+
+MAINTAINER Antonio Esposito "kobe@befair.it"
+
+COPY site.conf /etc/nginx/conf.d/site.conf
+\end{verbatim}
+
+\subsection{NGiNX configuration file}\label{nginx-configuration-file}
+
+\begin{verbatim}
+server {
+  listen 8080 default_server;
+
+  server_name _;
+  root /code;
+
+  charset utf-8;
+  client_max_body_size 75M;
+  client_body_timeout 600s;
+
+  location = /favicon.ico {
+    log_not_found off;
+    access_log off;
+  }
+
+  location = /robots.txt {
+    allow all;
+    log_not_found off;
+    access_log off;
+  }
+
+  location ~ /\. {
+    deny all;
+    log_not_found off;
+    access_log off;
+  }
+
+  location = / {
+    proxy_pass      http://front:5000/ui/index.html;
+    expires max;
+  }
+
+  location /components/ {
+    proxy_pass      http://front:5000/ui/components/;
+    expires max;
+  }
+
+  location /ui/bower_components/ {
+    proxy_pass      http://front:5000/libs/bower_components/;
+    expires max;
+  }
+
+  location /ui/ {
+    proxy_pass      http://front:5000;
+    expires max;
+  }
+
+  location /static/ {
+    include          uwsgi_params;
+    uwsgi_pass       uwsgi://back:5000;
+    expires max;
+  }
+
+  location /media/ {
+    include          uwsgi_params;
+    uwsgi_pass       uwsgi://back:5000;
+  }
+
+  location /api/ {
+    gzip             on;
+    gzip_types       application/json;
+    gzip_min_length  1000;
+
+    include          uwsgi_params;
+    uwsgi_pass       uwsgi://back:5000;
+  }
+
+  location /gasistafelice/ {
+    include          uwsgi_params;
+    uwsgi_pass       uwsgi://back:5000;
+  }
+
+  location / {
+    return 404;
+  }
+}
+\end{verbatim}
+
+\subsection{Dockerfile of uWSGI/Python2 base
+image}\label{dockerfile-of-uwsgipython2-base-image}
+
+\begin{verbatim}
+FROM python:2.7.7
+
+MAINTAINER Antonio Esposito "kobe@befair.it"
+
+ENV DEBIAN_FRONTEND         noninteractive
+
+ENV PYTHONUNBUFFERED        1
+ENV PYTHONPATH              /code:/usr/local/lib/python2.7/site-packages
+ENV UWSGI_CALLABLE          app
+
+ENV UWSGI_MASTER            true
+ENV UWSGI_MASTER_AS_ROOT    true
+ENV UWSGI_UID               app
+ENV UWSGI_GID               app
+ENV UWSGI_UWSGI_SOCKET      0.0.0.0:5000
+ENV UWSGI_NO_ORPHANS        true
+ENV UWSGI_VACUUM            true
+ENV UWSGI_LOG_DATE          true
+
+ENV UWSGI_WORKERS           4
+ENV UWSGI_THREADS           1
+ENV UWSGI_ENABLE_THREADS    true
+ENV UWSGI_BUFFER_SIZE       65536
+ENV UWSGI_MAX_REQUESTS      128
+ENV UWSGI_HARAKIRI          120
+ENV UWSGI_HARAKIRI_VERBOSE  true
+ENV UWSGI_THUNDER_LOCK      true
+
+ENV PGDATABASE              app
+ENV PGUSER                  app
+ENV PGPASSWORD              app
+ENV PGHOST                  db
+ENV PGPORT                  5432
+
+RUN groupadd -r app && \
+    useradd -r -g app -d /code app
+
+RUN apt update && \
+    apt install -y \
+      build-essential \
+      python-dev \
+      python-setuptools && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip install \
+      'uWSGI >=2.0, <2.1'
+
+EXPOSE 5000
+CMD ["uwsgi"]
+\end{verbatim}
+
+\subsection{Backend's Dockerfile}\label{backends-dockerfile}
+
+\begin{verbatim}
+FROM kobe25/uwsgi-python2:latest
+
+MAINTAINER Antonio Esposito "kobe@befair.it"
+
+ENV LC_ALL                  it_IT.UTF-8
+ENV LANG                    it_IT.UTF-8
+ENV LANGUAGE                it_IT.UTF-8
+
+ENV PYTHONPATH              /code:/code/gasistafelice:/usr/local/lib/python2.7/site-packages
+ENV UWSGI_CHDIR             /code/gasistafelice
+ENV UWSGI_WSGI_FILE         /code/gasistafelice/gf/wsgi.py
+ENV DJANGO_SETTINGS_MODULE  gf.settings
+ENV UWSGI_STATIC_MAP        /static=/code/gasistafelice/static
+ENV UWSGI_STATIC_SAFE       /usr/local/lib/python2.7/site-packages/django/contrib/admin/static/admin
+
+COPY deps/debian /code/gasistafelice/deps/debian
+RUN apt update && \
+    apt install -y $(cat /code/gasistafelice/deps/debian) && \
+    rm -rf /var/lib/apt/lists/*
+
+COPY deps/locale.gen /etc/locale.gen
+RUN locale-gen
+
+COPY deps/ /code/gasistafelice/deps/
+RUN pip install -r /code/gasistafelice/deps/dev.txt
+
+COPY ./ /code/gasistafelice/
+WORKDIR /code/gasistafelice/
+\end{verbatim}
+
+\subsection{Frontend's Dockerfile}\label{frontends-dockerfile}
+
+\begin{verbatim}
+FROM iojs:2.5
+
+MAINTAINER Antonio Esposito "kobe@befair.it"
+
+COPY deps/npm /code/ui/deps/npm
+RUN npm install -g $(cat /code/ui/deps/npm)
+
+COPY ./bower.json /code/libs/bower.json
+RUN cd /code/libs/ && bower install --allow-root
+
+EXPOSE 5000
+
+COPY ./ /code/ui/
+WORKDIR /code/ui/
+
+CMD ["harp", "server", "-i", "0.0.0.0", "-p", "5000", "/code"]
+\end{verbatim}
+
+\subsection{Docker Compose file}\label{docker-compose-file}
+
+\begin{verbatim}
+proxy:
+  image: befair/gasistafelice-proxy:latest
+  volumes:
+    - ./proxy/site.conf.dev:/etc/nginx/conf.d/site.conf:ro
+  ports:
+    - '127.0.0.1:8080:8080'
+  links:
+    - front
+    - back
+
+front:
+  image: befair/gasistafelice-front:latest
+  volumes:
+    - ./ui:/code/ui:rw
+
+back:
+  image: befair/gasistafelice-back:latest
+  volumes:
+    - ./gasistafelice:/code/gasistafelice:ro
+    - ./gasistafelice/fixtures:/code/gasistafelice/fixtures:rw
+    - /tmp/gf_tracebacker:/tmp/tracebacker:rw
+    - /tmp/gf_profiling:/tmp/profiling:rw
+  ports:
+    - '127.0.0.1:7000:7000'
+  links:
+    - db
+  env_file: ./compose/settings.env
+
+db:
+  image: postgres:9.4
+  env_file: ./compose/settings.env
+\end{verbatim}
+
+\subsection{OpenShift template}\label{openshift-template}
+
+\begin{verbatim}
+apiVersion: v1
+kind: Template
+metadata:
+  name: gasistafelice
+  annotations:
+    description: Gasista Felice is the platform for DES Macerata project
+    tags: app,gas,des
+labels:
+  app: gf
+  application: gasistafelice
+parameters:
+-
+  name: ENV
+  description: dev/stage/prod environment
+  value: prod
+-
+  name: SERVER_NAME
+  description: server name
+-
+  name: POSTGRES_PASSWORD
+  description: Password used for DB authentication
+  generate: expression
+  from: '[\w]{12}'
+objects:
+-
+  apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    name: db
+    labels:
+      name: db
+  spec:
+    replicas: 1
+    selector:
+      name: db
+    template:
+      metadata:
+        labels:
+          name: db
+      spec:
+        volumes:
+        -
+          name: postgres-ps
+          emptyDir: {}
+        containers:
+        -
+          name: db
+          image: openshift/postgresql-92-centos7
+          env:
+          -
+            name: POSTGRESQL_USER
+            value: app
+          -
+            name: POSTGRESQL_PASSWORD
+            value: ${POSTGRES_PASSWORD}
+          -
+            name: POSTGRESQL_DATABASE
+            value: app
+          -
+            name: POSTGRESQL_ADMIN_PASSWORD
+            value: ${POSTGRES_PASSWORD}
+          ports:
+          -
+            name: postgresql-port
+            containerPort: 5432
+          volumeMounts:
+          -
+            name: postgres-ps
+            mountPath: /var/lib/pgsql/data
+            readOnly: false
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: db
+    labels:
+      name: db
+  spec:
+    ports:
+    -
+      port: 5432
+      targetPort: postgresql-port
+    selector:
+      name: db
+-
+  apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    name: back
+  spec:
+    replicas: 1
+    selector:
+      name: back
+    template:
+      metadata:
+        labels:
+          name: back
+      spec:
+        containers:
+        -
+          name: back
+          image: befair/gasistafelice-back
+          ports:
+          -
+            name: back-port
+            containerPort: 5000
+          env:
+          -
+            name: APP_ENV
+            value: ${ENV}
+          -
+            name: APP_SERVER_NAME
+            value: ${SERVER_NAME}
+          -
+            name: POSTGRES_USER
+            value: app
+          -
+            name: POSTGRES_PASSWORD
+            value: ${POSTGRES_PASSWORD}
+          -
+            name: POSTGRESQL_USER
+            value: app
+          -
+            name: POSTGRESQL_PASSWORD
+            value: ${POSTGRES_PASSWORD}
+          -
+            name: POSTGRESQL_DATABASE
+            value: app
+          -
+            name: POSTGRESQL_ADMIN_PASSWORD
+            value: ${POSTGRES_PASSWORD}
+          -
+            name: PGUSER
+            value: app
+          -
+            name: PGPASSWORD
+            value: ${POSTGRES_PASSWORD}
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: back
+  spec:
+    ports:
+    -
+      port: 5000
+      targetPort: back-port
+    selector:
+      name: back
+-
+  apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    name: front
+  spec:
+    replicas: 1
+    selector:
+      name: front
+    template:
+      metadata:
+        labels:
+          name: front
+      spec:
+        containers:
+        -
+          name: front
+          image: befair/gasistafelice-front
+          ports:
+          -
+            name: front-port
+            containerPort: 5000
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: front
+  spec:
+    ports:
+    -
+      port: 5000
+      targetPort: front-port
+    selector:
+      name: front
+-
+  apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    name: proxy
+  spec:
+    replicas: 1
+    selector:
+      name: nginx
+    template:
+      metadata:
+        labels:
+          name: nginx
+      spec:
+        volumes:
+        -
+          name: nginx-cache
+          emptyDir: {}
+        -
+          name: nginx-run
+          emptyDir: {}
+        containers:
+        -
+          name: proxy
+          image: befair/gasistafelice-proxy
+          securityContext:
+            runAsUser: 0
+            privileged: true
+          ports:
+          -
+            name: insecure-port
+            containerPort: 8080
+          volumeMounts:
+          -
+            name: nginx-cache
+            mountPath: /var/cache/nginx
+            readOnly: false
+          -
+            name: nginx-run
+            mountPath: /var/run
+            readOnly: false
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: proxy
+  spec:
+    selector:
+      name: nginx
+    ports:
+    -
+      port: 8080
+      targetPort: insecure-port
+-
+  apiVersion: v1
+  kind: Route
+  metadata:
+    name: route
+  spec:
+    host: ${SERVER_NAME}
+    to:
+      kind: Service
+      name: proxy
+\end{verbatim}
+
+\section{IaaS and PaaS bootstrapping}\label{iaas-and-paas-bootstrapping}
+
+\subsection{Makefile}\label{makefile}
+
+\begin{verbatim}
+NETENV_V := 1.0.0
+TF_V := 0.6.3
+OS_V := 1.0.5
+OS_COMMIT := 96963b6
+
+BINPATH := ${GOPATH}/bin
+export PATH := ${GOPATH}/bin:${PATH}
+TF_URL := https://dl.bintray.com/mitchellh/terraform/terraform_${TF_V}_linux_amd64.zip
+OS_URL := https://github.com/openshift/origin/releases/download/v${OS_V}/openshift-origin-v${OS_V}-${OS_COMMIT}-linux-amd64.tar.gz
+NETENV_URL := https://github.com/kelseyhightower/setup-network-environment/releases/download/v${NETENV_V}/setup-network-environment
+
+
+help:
+        @cat Makefile
+
+install:
+        @mkdir -p .cache
+        @go get -u github.com/dbohdan/remarshal
+        @go get -u github.com/rakyll/boom
+        @go install github.com/dbohdan/remarshal
+        @go install github.com/rakyll/boom
+        @curl -L -o .cache/setup-network-environment -z .cache/setup-network-environment ${NETENV_URL}
+        @curl -L -o .cache/terraform.zip             -z .cache/terraform.zip             ${TF_URL}
+        @curl -L -o .cache/openshift-origin.tar.gz   -z .cache/openshift-origin.tar.gz   ${OS_URL}
+        @unzip -o   .cache/terraform.zip             -d ${BINPATH}/
+        @tar -xf    .cache/openshift-origin.tar.gz   -C .cache/
+        @ln -sf     .cache/openshift                    ${BINPATH}/openshift
+        @ln -sf     ${BINPATH}/openshift                ${BINPATH}/oc
+        @ln -sf     ${BINPATH}/openshift                ${BINPATH}/oadm
+
+clean soft-clean:
+        @rm -rf \
+                terraform.* \
+                .cache/*.{gz,zip,toml} \
+                .cache/master/ \
+                .cache/id*
+
+full-clean: clean
+        @rm -rf \
+                ${BINPATH}/terraform* \
+                .cache/
+
+compile:
+        @mkdir -p .cache
+        @remarshal \
+                -if yaml -i terraform/digitalocean.yaml \
+                -of json -o terraform.tf.json
+        @remarshal \
+                -if yaml -i vars.yaml \
+                -of json -o terraform.tfvars
+
+up: clean compile
+        @ssh-keygen -b 4096 -t rsa -f .cache/id -N ''
+        @tar -czf .cache/pkg.tar.gz \
+                openshift/ \
+                .cache/{setup-network-environment,openshift}
+        @terraform plan -out terraform.tfplan
+        @terraform apply terraform.tfplan
+
+delete destroy: compile
+        @terraform plan -destroy
+        @terraform destroy
+
+infrastructure-graph:
+        @terraform graph | dot -Tsvg > graph.svg
+
+test:
+        @./benchmark
+\end{verbatim}
+
+\subsection{Terraform template for Digital
+Ocean}\label{terraform-template-for-digital-ocean}
+
+\begin{verbatim}
+variable:
+  BASE_DOMAIN:    { default: befaircloud.me }
+  NODES:          { default: 2 }
+  OMASTER:        { default: /opt/bin/openshift.local.config/master }
+  ONODE:          { default: /opt/bin/openshift.local.config/node }
+  # Provider specific
+  DO_TOKEN:       {}
+  DO_SSH_ID:      { default: core }
+  DO_IMAGE:       { default: coreos-beta }
+  DO_REGION:      { default: fra1 }
+  DO_MASTER_SIZE: { default: 1gb }
+  DO_NODE_SIZE:   { default: 2gb }
+
+provider:
+  digitalocean:
+    token: ${var.DO_TOKEN}
+
+resource:
+  template_file:
+    master_conf:
+      filename: terraform/master.yaml
+      vars:
+        HOME: /home/core
+        OMASTER: ${var.OMASTER}
+        SSH_PUBLIC_KEY: ${file(".cache/id.pub")}
+        BASE_DOMAIN: ${var.BASE_DOMAIN}
+        NODES: ${var.NODES}
+
+    node_conf:
+      filename: terraform/node.yaml
+      vars:
+        HOME: /home/core
+        OMASTER: ${var.OMASTER}
+        ONODE: ${var.ONODE}
+        MASTER_IP: ${digitalocean_droplet.master.ipv4_address_private}
+        SSH_PUBLIC_KEY: ${file(".cache/id.pub")}
+      depends_on:
+      - digitalocean_droplet.master
+
+  digitalocean_ssh_key:
+    superuser:
+      name: ${var.DO_SSH_ID}
+      public_key: ${file(".cache/id.pub")}
+  digitalocean_droplet:
+    master:
+      image: ${var.DO_IMAGE}
+      name: master
+      region: ${var.DO_REGION}
+      size: ${var.DO_MASTER_SIZE}
+      ipv6: true
+      private_networking: true
+      user_data: ${template_file.master_conf.rendered}
+      ssh_keys:
+      - ${digitalocean_ssh_key.superuser.fingerprint}
+      depends_on:
+      - template_file.master_conf
+      connection:
+        user: core
+        key_file: .cache/id
+      provisioner:
+        file:
+          source: .cache/pkg.tar.gz
+          destination: /home/core/pkg.tar.gz
+        remote-exec:
+          inline:
+          - sudo mkdir -p /opt/bin/
+          - tar -xf /home/core/pkg.tar.gz -C /home/core
+          - sudo mv /home/core/.cache/setup-network-environment /opt/bin/
+          - sudo mv /home/core/.cache/openshift /opt/bin/
+          - mv /home/core/openshift/* /home/core/
+          - rm -rf /home/core/{pkg.tar.gz,.cache,openshift}
+
+    nodes:
+      count: ${var.NODES}
+      image: ${var.DO_IMAGE}
+      name:  node-${count.index}
+      region: ${var.DO_REGION}
+      size: ${var.DO_NODE_SIZE}
+      ipv6: true
+      private_networking: true
+      user_data: ${template_file.node_conf.rendered}
+      ssh_keys:
+      - ${digitalocean_ssh_key.superuser.fingerprint}
+      depends_on:
+      - digitalocean_droplet.master
+      - template_file.node_conf
+      connection:
+        user: core
+        key_file: .cache/id
+      provisioner:
+        file:
+          source: .cache/pkg.tar.gz
+          destination: /home/core/pkg.tar.gz
+        remote-exec:
+          inline:
+          - sudo mkdir -p /opt/bin/
+          - tar -xf /home/core/pkg.tar.gz -C /home/core
+          - sudo mv /home/core/.cache/setup-network-environment /opt/bin/
+          - sudo mv /home/core/.cache/openshift /opt/bin/
+          - rm -rf /home/core/{pkg.tar.gz,.cache,openshift}
+
+  digitalocean_domain:
+    cloud:
+      name: ${var.BASE_DOMAIN}
+      ip_address: ${digitalocean_droplet.nodes.0.ipv4_address}
+      depends_on:
+      - digitalocean_droplet.nodes
+
+  digitalocean_record:
+    cloud_ipv4:
+      domain: ${digitalocean_domain.cloud.name}
+      type: A
+      name: '*'
+      value: ${digitalocean_droplet.nodes.0.ipv4_address}
+
+output:
+  step1:
+    value: |
+      scp -r -i .cache/id -o StrictHostKeyChecking=no core@${digitalocean_droplet.master.ipv4_address}:./master .cache/; \
+      scp -r -i .cache/id -o StrictHostKeyChecking=no .cache/master core@${digitalocean_droplet.nodes.0.ipv4_address}:./; \
+      scp -r -i .cache/id -o StrictHostKeyChecking=no .cache/master core@${digitalocean_droplet.nodes.1.ipv4_address}:./
+  step2:
+    value: |
+      log to master -- ssh -i .cache/id -o StrictHostKeyChecking=no core@${digitalocean_droplet.master.ipv4_address}
+      log to node-0 -- ssh -i .cache/id -o StrictHostKeyChecking=no core@${digitalocean_droplet.nodes.0.ipv4_address}
+      log to node-1 -- ssh -i .cache/id -o StrictHostKeyChecking=no core@${digitalocean_droplet.nodes.1.ipv4_address}
+      dashboard -- https://${digitalocean_droplet.master.ipv4_address}:8443
+      entrypoint -- http://${var.BASE_DOMAIN}
+\end{verbatim}
+
+\subsection{Master Cloud Config
+template}\label{master-cloud-config-template}
+
+\begin{verbatim}
+#cloud-config
+
+---
+hostname: master
+ssh_authorized_keys:
+- ${SSH_PUBLIC_KEY}
+coreos:
+  update:
+    group: alpha
+    reboot-strategy: off
+  etcd2:
+    name: master
+    listen-client-urls: http://0.0.0.0:2379
+    advertise-client-urls: http://$private_ipv4:2379
+    initial-cluster-token: k8s_etcd
+    listen-peer-urls: http://$private_ipv4:2380
+    initial-advertise-peer-urls: http://$private_ipv4:2380
+    initial-cluster: master=http://$private_ipv4:2380
+    initial-cluster-state: new
+  units:
+  -
+    name: bootstrap-master.service
+    command: start
+    content: |
+      [Unit]
+      Description=Bootstrap the OpenShift master
+      Requires=network-online.target
+      After=network-online.target
+
+      [Service]
+      # Setup network environment
+      ExecStartPre=/opt/bin/wufae /opt/bin/setup-network-environment
+      ExecStartPre=/usr/bin/chown root:root /opt/bin/setup-network-environment
+      ExecStartPre=/usr/bin/chmod +x /opt/bin/setup-network-environment
+      ExecStartPre=/opt/bin/setup-network-environment
+      # Generate OpenShift master configurations
+      ExecStartPre=/opt/bin/wufae /opt/bin/openshift
+      ExecStartPre=/usr/bin/chown root:root /opt/bin/openshift
+      ExecStartPre=/usr/bin/chmod +x /opt/bin/openshift
+      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift /opt/bin/oadm
+      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift /opt/bin/oc
+      ExecStart=/opt/bin/openshift start master \
+      --write-config=${OMASTER}/ \
+      --listen=https://0.0.0.0:8443 \
+      --master=https://$private_ipv4:8443 \
+      --public-master=https://$public_ipv4:8443 \
+      --dns=tcp://$private_ipv4:53 \
+      --etcd=http://$private_ipv4:2379 \
+      --network-cidr='10.1.0.0/16'
+      # Copy files for nodes
+      ExecStartPost=/usr/bin/chmod +r ${OMASTER}/admin.kubeconfig
+      ExecStartPost=/usr/bin/chmod +r ${OMASTER}/openshift-registry.kubeconfig
+      ExecStartPost=/usr/bin/sleep 5
+      ExecStartPost=/usr/bin/cp -R ${OMASTER} ${HOME}/
+      ExecStartPost=/usr/bin/chown -R core:core ${HOME}/master/
+      RemainAfterExit=yes
+      Type=oneshot
+  -
+    name: flanneld.service
+    command: start
+    drop-ins:
+    - name: 50-network-config.conf
+      content: |
+        [Unit]
+        Requires=etcd2.service
+        [Service]
+        ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan"}}'
+  -
+    name: docker.service
+    command: start
+  -
+    name: openshift-master.service
+    command: start
+    content: |
+      [Unit]
+      Description=OpenShift Master
+      Documentation=https://github.com/openshift/origin
+      Requires=bootstrap-master.service etcd2.service
+      After=bootstrap-master.service etcd2.service
+
+      [Service]
+      EnvironmentFile=/etc/network-environment
+      ExecStartPre=/opt/bin/wupiao 127.0.0.1:2379/v2/machines
+      ExecStart=/opt/bin/openshift start master \
+      --config=${OMASTER}/master-config.yaml
+      Restart=always
+      RestartSec=10
+write-files:
+-
+  path: /etc/conf.d/nfs
+  permissions: '0644'
+  content: |
+    OPTS_RPC_MOUNTD=""
+-
+  path: /opt/bin/wupiao
+  permissions: '0755'
+  content: |
+    #!/bin/bash
+    # [w]ait [u]ntil [p]ort [i]s [a]ctually [o]pen
+    [ -n "$1" ] && \
+      until curl -o /dev/null -sIf http://$${1}; do \
+        sleep 1 && echo -n .;
+      done;
+    exit $?
+-
+  path: /opt/bin/wufae
+  permissions: '0755'
+  content: |
+    #!/bin/bash
+    # [w]ait [u]ntil [f]ile [a]ctually [e]xists
+    while [ ! -f "$1" ]; do
+      sleep 1 && echo -n .; done
+    sleep 5
+-
+  path: /home/core/.bashrc
+  permissions: '0644'
+  owner: core
+  content: |
+    if [[ $- != *i* ]]; then
+      return; fi
+
+    export OMASTER=${OMASTER}
+    export KUBECONFIG=${OMASTER}/admin.kubeconfig
+    export CURL_CA_BUNDLE=${OMASTER}/ca.crt
+    export BASE_DOMAIN=${BASE_DOMAIN}
+    export NODES=${NODES}
+\end{verbatim}
+
+\subsection{Node Cloud Config
+template}\label{node-cloud-config-template}
+
+\begin{verbatim}
+#cloud-config
+
+---
+hostname: node
+ssh_authorized_keys:
+- ${SSH_PUBLIC_KEY}
+coreos:
+  update:
+    group: alpha
+    reboot-strategy: off
+  etcd2:
+    listen-client-urls: http://0.0.0.0:2379
+    advertise-client-urls: http://0.0.0.0:2379
+    initial-cluster: master=http://${MASTER_IP}:2380
+    proxy: on
+  units:
+  -
+    name: bootstrap-node.service
+    command: start
+    content: |
+      [Unit]
+      Description=Bootstrap the OpenShift node
+      Requires=network-online.target
+      After=network-online.target
+
+      [Service]
+      # Setup network environment
+      ExecStartPre=/opt/bin/wufae /opt/bin/setup-network-environment
+      ExecStartPre=/usr/bin/chown root:root /opt/bin/setup-network-environment
+      ExecStartPre=/usr/bin/chmod +x /opt/bin/setup-network-environment
+      ExecStart=/opt/bin/setup-network-environment
+      # Generate OpenShift node configurations
+      WorkingDirectory=/opt/bin
+      ExecStartPre=/usr/bin/mkdir -p ${ONODE}
+      ExecStartPre=/opt/bin/wufae /opt/bin/openshift
+      ExecStartPre=/usr/bin/chown root:root /opt/bin/openshift
+      ExecStartPre=/usr/bin/chmod +x /opt/bin/openshift
+      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift /opt/bin/oadm
+      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift /opt/bin/oc
+      # wait for master config
+      ExecStartPre=/opt/bin/wufae ${HOME}/master/master-config.yaml
+      ExecStartPre=/usr/bin/cp -R ${HOME}/master/ ${OMASTER}/
+      ExecStartPre=/usr/bin/chown -R root:root ${OMASTER}/
+      ExecStartPre=/opt/bin/oadm create-node-config \
+      --master=https://${MASTER_IP}:8443 \
+      --dns-ip=${MASTER_IP} \
+      --node-dir=${ONODE} \
+      --node=$private_ipv4 \
+      --hostnames=$private_ipv4 \
+      --listen=https://0.0.0.0:10250 \
+      --volume-dir=/var/volumes
+      # wait for kubernetes master to be up and ready
+      ExecStartPre=/opt/bin/wupiao ${MASTER_IP} 8443
+      ExecStart=/usr/bin/echo 'Ready for starting OpenShift Node!'
+      RemainAfterExit=yes
+      Type=oneshot
+  -
+    name: flanneld.service
+    command: start
+    drop-ins:
+    - name: 50-network-config.conf
+      content: |
+        [Unit]
+        Requires=etcd2.service
+        [Service]
+        ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan"}}'
+  -
+    name: docker.service
+    command: start
+  -
+    name: openshift-node.service
+    command: start
+    content: |
+      [Unit]
+      Description=OpenShift Node
+      Documentation=https://github.com/openshift/origin
+      Requires=bootstrap-node.service etcd2.service docker.service
+      After=bootstrap-node.service etcd2.service docker.service
+
+      [Service]
+      EnvironmentFile=/etc/network-environment
+      WorkingDirectory=/opt/bin
+      ExecStart=/opt/bin/openshift start node \
+      --config=${ONODE}/node-config.yaml
+      Restart=always
+      RestartSec=10
+write-files:
+-
+  path: /opt/bin/wupiao
+  permissions: '0755'
+  content: |
+    #!/bin/bash
+    # [w]ait [u]ntil [p]ort [i]s [a]ctually [o]pen
+    [ -n "$1" ] && [ -n "$2" ] && while ! curl --output /dev/null \
+      --silent --head --fail \
+      http://$${1}:$${2}; do sleep 1 && echo -n .; done;
+    exit $?
+-
+  path: /opt/bin/wufae
+  permissions: '0755'
+  content: |
+    #!/bin/bash
+    # [w]ait [u]ntil [f]ile [a]ctually [e]xists
+    while [ ! -f "$1" ]; do
+      sleep 1 && echo -n .; done
+    sleep 5
+\end{verbatim}
+
+\section{Monitoring Stack}\label{monitoring-stack}
+
+\subsection{OpenShift template}\label{openshift-template-1}
+
+\begin{verbatim}
+apiVersion: v1
+kind: Template
+metadata:
+  name: monitoring
+  annotations:
+    description: Monitoring stack for OpenShift cluster
+    tags: monitoring,influxdb,grafana,heka
+labels:
+  app: monit
+  application: monitoring
+parameters:
+-
+  name: BASE_DOMAIN
+  description: server name
+-
+  name: NODES
+  description: number of nodes
+-
+  name: INFLUXDB_PASSWORD
+  description: Password used for DB authentication
+  generate: expression
+  from: '[\w]{12}'
+objects:
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: influxdb
+    labels:
+      component: influxdb
+  spec:
+    selector:
+      component: influxdb
+    ports:
+    -
+      port: 80
+      targetPort: api
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: influxdb-ui
+    labels:
+      component: influxdb
+  spec:
+    selector:
+      component: influxdb
+    ports:
+    -
+      port: 80
+      targetPort: ui
+-
+  apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    name: influxdb
+    labels:
+      component: influxdb
+  spec:
+    replicas: 1
+    selector:
+      component: influxdb
+    template:
+      metadata:
+        labels:
+          component: influxdb
+      spec:
+        volumes:
+        -
+          name: influxdb-data
+          emptyDir: {}
+        containers:
+          -
+            name: influxdb
+            image: tutum/influxdb:0.8.8
+            volumeMounts:
+              -
+                name: influxdb-data
+                mountPath: /data
+            ports:
+              -
+                name: ui
+                containerPort: 8083
+              -
+                name: api
+                containerPort: 8086
+              -
+                name: raft
+                containerPort: 8090
+              -
+                name: protobuf
+                containerPort: 8099
+            env:
+              -
+                name: ADMIN_USER
+                value: root
+              -
+                name: INFLUXDB_INIT_PWD
+                value: root
+              -
+                name: PRE_CREATE_DB
+                value: logs;k8s
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: heapster
+    labels:
+      component: heapster
+  spec:
+    selector:
+      component: heapster
+    ports:
+    -
+      port: 80
+      targetPort: ui
+-
+  apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    name: heapster
+    labels:
+      component: heapster
+  spec:
+    replicas: 1
+    selector:
+      component: heapster
+    template:
+      metadata:
+        labels:
+          component: heapster
+      spec:
+        serviceAccount: heapster
+        containers:
+        -
+          name: heapster
+          image: kubernetes/heapster:v0.17.0
+          args:
+          - -port=8082
+          - -source=kubernetes:https://openshift.default.svc.cluster.local?auth=&insecure=true&useServiceAccount=true
+          - -sink=influxdb:http://influxdb.default.svc.cluster.local
+          - -logtostderr=true
+          ports:
+          -
+            name: ui
+            containerPort: 8082
+-
+  apiVersion: v1
+  kind: Service
+  metadata:
+    name: grafana
+    labels:
+      component: grafana
+  spec:
+    selector:
+      component: grafana
+    ports:
+    -
+      port: 80
+      targetPort: http
+-
+  apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    name: grafana
+    labels:
+      component: grafana
+  spec:
+    replicas: 1
+    selector:
+      component: grafana
+    template:
+      metadata:
+        labels:
+          component: grafana
+      spec:
+        containers:
+        -
+          name: grafana
+          image: kobe25/grafana:latest
+          ports:
+          -
+            name: http
+            containerPort: 3000
+          env:
+          -
+            name: GF_SERVER_ROOT_URL
+            value: http://grafana.${BASE_DOMAIN}
+          -
+            name: GF_SECURITY_ADMIN_PASSWORD
+            value: admin
+-
+  apiVersion: v1
+  kind: ReplicationController
+  metadata:
+    name: heka
+    labels:
+      component: heka
+  spec:
+    replicas: 2
+    selector:
+      component: heka
+    template:
+      metadata:
+        labels:
+          component: heka
+      spec:
+        volumes:
+        -
+          name: heka-cache
+          emptyDir: {}
+        -
+          name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+        containers:
+        -
+          name: heka
+          image: kobe25/heka:latest
+          volumeMounts:
+          -
+            name: heka-cache
+            mountPath: /var/cache/hekad
+          -
+            name: docker-socket
+            mountPath: /var/run/docker.sock
+          ports:
+          -
+            name: http
+            containerPort: 4352
+-
+  apiVersion: v1
+  kind: Route
+  metadata:
+    name: heapster
+  spec:
+    host: heapster.${BASE_DOMAIN}
+    to:
+      kind: Service
+      name: heapster
+-
+  apiVersion: v1
+  kind: Route
+  metadata:
+    name: influxdb-ui
+  spec:
+    host: influxdb-ui.${BASE_DOMAIN}
+    to:
+      kind: Service
+      name: influxdb-ui
+-
+  apiVersion: v1
+  kind: Route
+  metadata:
+    name: influxdb
+  spec:
+    host: influxdb.${BASE_DOMAIN}
+    to:
+      kind: Service
+      name: influxdb
+-
+  apiVersion: v1
+  kind: Route
+  metadata:
+    name: grafana
+  spec:
+    host: grafana.${BASE_DOMAIN}
+    to:
+      kind: Service
+      name: grafana
+\end{verbatim}
+
+\subsection{Heka's configuration file}\label{hekas-configuration-file}
+
+\begin{verbatim}
+[DockerLogInput]
+  endpoint = 'unix:///var/run/docker.sock'
+  decoder = 'MultiDecoder'
+
+[MultiDecoder]
+  cascade_strategy = 'first-wins'
+  subs = [
+    'NginxAccess',
+    'NginxError',
+    'PayloadRegexDecoder',
+  ]
+
+[NginxAccess]
+  type = 'SandboxDecoder'
+  filename = 'lua_decoders/nginx_access.lua'
+  [NginxAccess.config]
+    type = 'nginx.access'
+    user_agent_transform = true
+    log_format = "$remote_addr - $remote_user [$msec] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\" \"$http_x_forwarded_for\""
+
+[NginxError]
+  type = 'SandboxDecoder'
+  filename = 'lua_decoders/nginx_error.lua'
+  [NginxError.config]
+    type = 'nginx.error'
+
+[PayloadRegexDecoder]
+  match_regex = '(...)'
+  [PayloadRegexDecoder.message_fields]
+    Type = "LogNotManaged"
+
+[HttpStatus]
+  type = 'SandboxFilter'
+  filename = 'lua_filters/http_status.lua'
+  message_matcher = 'Type == "nginx.access"'
+
+[InfluxSchema]
+  type = 'SandboxEncoder'
+  filename = 'lua_encoders/schema_influx.lua'
+  [InfluxSchema.config]
+    exclude_base_fields = true
+    series = "%{Type}"
+
+[InfluxOutput]
+  type = 'HttpOutput'
+  encoder = 'InfluxSchema'
+  message_matcher = 'Type == "nginx.access"'
+  address = 'http://influxdb.default.svc.cluster.local/db/logs/series'
+  method = 'POST'
+  username = 'root'
+  password = 'root'
+\end{verbatim}

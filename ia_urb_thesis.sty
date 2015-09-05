@@ -1,0 +1,419 @@
+% Thesis style of the degree programme in Applied Computer Science
+% University of Urbino Carlo Bo
+
+% Revised version by Alberto Carini 28/03/2014: removed apex in Carlo Bo
+% Revised version by Alberto Carini 16/04/2013: university style
+% Revised version by Alberto Carini 31/01/2013: new deparment and school
+% Revised version by Alberto Carini 08/02/2007: new faculty, fixed bibliography
+% Revised version by Alberto Carini 25/01/2006: supported english thesis
+% Revised version by Marco Bernardo and Alberto Carini 19/01/2005:
+% file name change
+% Revised version by Alberto Carini 27/10/2004: fixed problem with \appendix
+% Original version by Alberto Carini 18/10/2004 
+% Adapted from Stanford University latex thesis style file.
+
+%%%%%
+%%%%%   PRELIM
+%%%%%
+
+\typeout{Document Style Option `ia_urb_thesis' for latex2e <$Date: 18/10/2004 $>.}
+\typeout{Fulfill the thesis stile of Applied Computer Science - University of Urbino}
+
+\@ifundefined{chapter}{\@latexerr{The `ia_urb_thesis' option should be used
+with the `report' document style}}{}
+
+
+%%%%%
+%%%%%   DOCUMENTATION
+%%%%%
+
+\long\def\comment#1{}
+\comment{
+
+  Esempio d'uso del file di stile:
+  
+    %%%%%%%%%%%%%%%%%%%% File: TESI.TEX %%%%%%%%%%%%%%%%%%%%
+        
+	\documentclass[a4paper,twoside,11pt]{report}
+	%\documentclass[a4paper,singleside,11pt]{report}
+	\usepackage{ia_urb_thesis}
+	\usepackage[italian]{babel}
+	%\usepackage[latin1]{inputenc}
+	\usepackage[utf8]{inputenc}
+	\usepackage[T1]{fontenc}
+	\usepackage{graphicx}
+	\usepackage{epsfig}
+
+	\begin{document}
+
+	\titolo{Riduzione del consumo di potenza\\[5mm]
+		in reti locali wireless}
+	\candidato{Andrea Rossi}
+	\relatore{Chiar.mo Prof.~Mario Bianchi}
+	\correlatori{Chiar.mo Prof.~Davide Verdi \\ Dott.~Giuseppe Gialli}
+	%\correlatore{Chiar.mo Prof.~Davide Verdi} 
+	\annoaccademico{2006-2007}
+
+	\copertinatesi 
+	\dedica{Ai miei genitori}
+	\indice
+	\indicefigure
+	\indicetabelle
+	\iniziatesto
+
+	\include{cap_1}
+	\include{cap_2}
+	%\include{cap_3}
+	%\include{cap_4}
+	%\include{cap_6}
+	%\include{cap_5}
+	%\include{cap_7}
+	%\include{cap_8}
+
+	\appendix
+	\include{app_a}
+	\include{biblio}
+
+	\ringraziamenti
+	Vorrei ringraziare ...
+
+	\end{document}
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Documentazione:
+
+    Questo file di stile dovrebbe essere utilizzato per tutte le tesi
+    di Laurea in Informatica Applicata dell'Università di Urbino.
+    Va utilizzata la "documentclass" report con formato "a4paper" e 
+    caratteri a 11pt. 
+    La versione della tesi da consegnare in segreteria deve essere 
+    stampata in fronte-retro e quindi va compilata con il formato 
+    "twoside". 
+    La versione in formato elettronico da consegnare al responsabile 
+    tesi deve essere a facciata singola e quindi va compilata con 
+    l'opzione "singleside".
+    
+    I seguenti comandi definiscono i contenuti della copertina e vanno 
+    aggiunti subito dopo il "\begin{document}"
+    
+    \titolo{Riduzione del consumo di potenza\\[5mm]
+            in reti locali wireless}
+    \candidato{Andrea Rossi}
+    \relatore{Chiar.mo Prof.~Mario Bianchi}
+    \correlatori{Chiar.mo Prof.~Davide Verdi \\ Dott.~Giuseppe Gialli}
+    %\correlatore{Chiar.mo Prof.~Davide Verdi} 
+    \annoaccademico{2006-2007}
+    
+    \titolo definisce il titolo della tesi che può occupare 1, 2 o 
+            più righe. Conviene spezzare manualmente le righe con il 
+            comando "\\[5mm]" in modo da garantire una corretta 
+            spaziatura.
+    \candidato  il nome del candidato.
+    \relatore   il nome del relatore.
+    \correlatore o
+    \correlatori comandi opzionali da utilizzarsi nel caso di 1 o
+             più correlatori.
+    \annoaccademico l'anno accademico di appartenenza del laureando.
+    
+    I seguenti comandi servono invece per la formattazione del testo:
+
+    \copertinatesi     Genera la copertina della tesi.
+    \dedica{A ...}     Opzionale, inserisce una dedica. 
+    \indice            Genera l'indice
+    \indicefigure      Opzionale, genera la lista delle figure
+    \indicetabelle     Opzionale, genera la lista delle tabelle
+    \iniziatesto       Formatta il corpo principale del testo.
+    
+    Seguono i vari capitoli della tesi, le eventuali appendici,
+    la bibliografia ed i ringraziamenti.
+    I vari capitoli potrebbero essere importati da dei files separati
+    mediante comandi di include (es. \include{cap1.tex}).
+    Prima di includere le appendici va dato il comando \appendix.
+    
+    La bibliografia può essere generata con il seguente comando:
+    
+    \begin{thebibliography}{99}
+    \bibitem{Oetiker}
+        Tobias Oetiker et alt., ``Una (mica tanto) breve introduzione a 
+        LATEX2E,'' Versione 3.16, 25 settembre 2000
+    \bibitem{Knuth}
+    ....
+    \end{thebibliography}
+    
+    I ringraziamenti (sempre conclusivi) possono essere generati con il 
+    comando:
+
+    \ringraziamenti
+    Vorrei ringraziare ....
+    
+    Le figure (in formato .eps) possono essere incluse nel testo con i 
+    comandi:
+
+    \begin{figure}[tbhp]
+    \centering
+    \includegraphics[width=6cm]{fig.eps}
+    \caption{Un commento.}
+    \label{mialabel}
+    \end{figure}    
+    
+    Se si vuole scrivere la tesi in inglese è sufficiente sostituire la parte 
+    dichiarativa del file tese.tex con:
+    
+    \documentclass[a4paper,twoside,11pt]{report}
+    %\documentclass[a4paper,singleside,11pt]{report}
+    \def\lingua{english}
+    \usepackage[T1]{fontenc}
+    \usepackage{graphicx}
+    \usepackage{epsfig}
+    \usepackage{ia_urb_thesis}
+    \usepackage[\lingua]{babel}
+    
+    Per chi non abbia esperienza di LaTeX, un ottimo testo introduttivo 
+    (sufficiente per tutto quanto possa servire ai fini della tesi) è il
+    libro di Tobias Oetiker et alt.,
+    "Una (mica tanto) breve introduzione a LATEX2E" scaricabile da:
+    http://www.ctan.org/tex-archive/info/lshort/italian/itlshort.pdf 
+    
+    Per garantire sia fattibile il copia-incolla del testo nel file pdf,  
+    si consiglia di utilizzare la  seguente sequenza di comandi di 
+    compilazione: latex -> dvips -> ps2pdf, o in alternativa: 
+    latex -> dvipdfm.
+    
+    Si rammenta che gli accenti italiani à è é ì ò ù in latex si scrivono 
+    con i comandi composti \`a \`e \'e \`i \`o \`u.
+    E' possibile usare le lettere accentate da tastiera solo se i file 
+    latex sono salvati nel formato UTF8 e viene incluso il package "inputenc"
+    con l'opzione utf8 (con \usepackage[utf8]{inputenc}).
+    Si noti però che mentre i comandi composti \`a \`e \'e \`i \`o \`u funzionano 
+    indipendentemente dalla codifica usata, l'uso degli accenti da tastiera 
+    includendo il package "inputenc" con l'opzione UTF8 è strettamente legato alla
+    codifica usata e quindi non segue le buone regole di portabilità dei sorgenti.
+    
+
+}
+
+%%%%%
+%%%%%   SETUP DOUBLESPACING
+%%%%%
+
+% include doublespace.sty for some of the stuff below
+
+\RequirePackage{setspace}
+\RequirePackage{graphicx}
+\RequirePackage{fancyhdr}
+\RequirePackage{ifthen}
+
+% Use 1.0 times the normal baseline-to-baseline skip
+\setstretch{1.0}
+
+
+%%%%%
+%%%%%   SETUP MARGINS AND PENALTIES 
+%%%%%
+
+% We need 1" margins except on the binding edge, where it is 1 1/2"
+% Theses may be either single or double sided
+  \if@twoside
+     \setlength\oddsidemargin   {25mm}
+     \setlength\evensidemargin  {0mm}
+     \setlength\marginparwidth  {10mm}
+  \else
+     \setlength\oddsidemargin   {25mm}
+     \setlength\evensidemargin  {25mm}
+     \setlength\marginparwidth  {10mm}
+  \fi
+
+\marginparsep 0mm
+\hoffset 0mm
+%\oddsidemargin 0.5in \evensidemargin 0in
+%\marginparwidth 40pt 
+
+%\topmargin 0pt \headsep .5in
+%\textheight 8.1in 
+
+\textwidth 130mm
+
+% Disallow page breaks at hyphens (this will give some underfull vbox's,
+% so an alternative is to use \brokenpenalty=100 and manually search
+% for and fix such page breaks)
+\brokenpenalty=10000
+
+%%%%%
+%%%%%   SETUP COMMANDS PECULIAR TO THESES
+%%%%%
+
+
+\def\titolo#1{\gdef\@titolo{#1}}
+\def\candidato#1{\gdef\@candidato{#1}}
+\def\relatore#1{\gdef\@relatore{#1}}
+\def\correlatori#1{\gdef\@correlatori{Correlatori:\\#1}}
+\def\correlatore#1{\gdef\@correlatore{Correlatore:\\#1}}
+\def\annoaccademico#1{\gdef\@annoaccademico{#1}}
+%\def\lingua#1{\gdef\@lingua{#1}}
+
+
+\def\@correlatori{*}
+\def\@correlatore{*}
+
+\def\titlep{%
+        \thispagestyle{empty}%
+        \null
+        \vspace{-10mm}
+    \begin{minipage}{\textwidth}%
+    \begin{tabular}{c}%
+    \includegraphics[height=4cm]{logo_uniurb.eps}\\[5mm]%
+    \large{UNIVERSIT\`A DEGLI STUDI DI URBINO CARLO BO}\\[3mm]%
+    \large{Dipartimento di Scienze di Base e Fondamenti}\\[0.5mm]%
+    \normalsize{Scuola di Scienze e Tecnologie dell'Informazione}\\[0.5mm]%
+    \rule{11.0cm}{0.5pt}\\[7mm]%
+    \large{Tesi di Laurea}\\%
+    \end{tabular}%
+    \end{minipage}%
+    \vfill%
+    %\begin{minipage}{\textwidth}%
+        \begin{center}%
+                \textbf{\Large\uppercase\expandafter{\@titolo}}%
+        \end{center}%
+    %\end{minipage}%
+        \vfill%
+    \begin{minipage}[t]{\textwidth}%
+    \begin{tabular}{ll}%
+    Relatore: \hspace{65mm} & Candidato: \\%
+    \@relatore & \@candidato\\[5mm]%
+    \end{tabular} 
+    \begin{tabular}{l}%
+    \if*\@correlatori 
+        \if*\@correlatore \\[27mm] 
+        \else \@correlatore \\[5mm] \fi 
+    \else \@correlatori \\ \fi
+    \end{tabular} \\[5mm]%
+    \vspace{1mm}\centerline{\rule{6.5cm}{0.5pt}}\\%
+    \centerline{Corso di Laurea in Informatica Applicata}\\[0.5mm]%
+    \centerline{Anno Accademico \@annoaccademico} %
+    \end{minipage}%
+        \null
+    \newpage}
+
+\def\dedicapage{%
+        \null\vfill
+        \begin{flushright}%
+                \large%
+                \@dedica
+        \end{flushright}
+        \vfill\null\vfill\newpage}
+
+\def\copertinatesi{
+        \pagenumbering{roman}
+        \pagestyle{empty}
+        \titlep
+        \newpage
+        \cleardoublepage
+        }
+
+\def\dedica#1{   
+        \pagestyle{plain}
+        \null\vfill
+        \begin{flushright}%
+                \large%
+                #1
+        \end{flushright}
+        \vfill\null\vfill\newpage
+        \cleardoublepage
+        }
+
+\def\indice{
+        \pagestyle{plain}
+        \tableofcontents
+        \newpage
+        }
+        
+\def\indicefigure{
+        \pagestyle{plain}
+        \listoffigures
+        \newpage
+        }
+        
+\def\indicetabelle{
+        \pagestyle{plain}
+        \listoftables
+        \newpage
+        }
+        
+
+\def\iniziatesto{
+    \cleardoublepage
+        \pagenumbering{arabic}
+    \pagestyle{fancy}
+    \renewcommand{\chaptermark}[1]{\markboth{##1}{##1}} % remember chapter title
+    \renewcommand{\sectionmark}[1]{\markright{\thesection\ ##1 }}
+                                                 % section number and title 
+    %\lhead[\fancyplain{}{\bf\thepage}]{\fancyplain{}{\bf\miomark}}
+    \lhead[\fancyplain{}{\bf\thepage}]{\fancyplain{}{\bf\miomark}}
+    \rhead[\fancyplain{}{\bf\miomark}]{\fancyplain{}{\bf\thepage}}
+    \def\miomark{\rightmark}
+    \def\miominit{\thesection~}
+    \cfoot{}
+    \fancypagestyle{plain}{% 
+    \fancyhead{} %get rid of the headers on plain pages 
+    \renewcommand{\headrulewidth}{0pt}} % and the line  
+}
+
+ 
+\def\ringraziamenti{%
+    \newpage 
+    \cleardoublepage
+    \pagestyle{plain}
+    \ifx\lingua\undefined
+        \chapter*{Ringraziamenti}
+        \addcontentsline{toc}{chapter}{Ringraziamenti}
+    \else
+        \ifthenelse{\equal{\lingua}{english}}{
+            \chapter*{Acknowledgments}
+            \addcontentsline{toc}{chapter}{Acknowledgments}}{}
+        \ifthenelse{\equal{\lingua}{italian}}{  
+            \chapter*{Ringraziamenti}
+            \addcontentsline{toc}{chapter}{Ringraziamenti}}{}
+     \fi
+    }
+    
+%\def\mybibname{%
+%    \ifx\lingua\undefined
+%        Bibliografia
+%    \else
+%      \ifthenelse{\equal{\lingua}{english}}{
+%        Bibliography
+%        \ifthenelse{\equal{\lingua}{italian}}{  
+%        Bibliografia
+%     \fi
+%    }
+
+
+% Redefine \thebibliography to go to a new page and put an entry in the
+% table of contents
+%\let\@ldthebibliography\thebibliography
+%\renewcommand{\thebibliography}[1]{\newpage
+%                \@ldthebibliography{#1}%
+%\addcontentsline{toc}{chapter}{\bibname}}
+
+\let\@ldthebibliography\thebibliography
+\renewcommand{\thebibliography}[1]{\newpage                 
+                \@ldthebibliography{#1}%
+                %\markboth{Bibliografia}{Bibliografia}
+                \ifx\lingua\undefined
+                    \markboth{Bibliografia}{Bibliografia}
+                \else
+                    \ifthenelse{\equal{\lingua}{english}}{
+                        \markboth{Bibliography}{Bibliography}}{}
+                    \ifthenelse{\equal{\lingua}{italian}}{  
+                        \markboth{Bibliografia}{Bibliografia}}{}
+                 \fi                 
+\addcontentsline{toc}{chapter}{\bibname}}
+
+
+
+
+
+% Start out normal
+\pagestyle{headings}
