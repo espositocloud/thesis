@@ -1,0 +1,79 @@
+\chapter{Introduction}\label{introduction}
+
+Today there is the \emph{cloud}, where some kind of services are
+delegated by third-party providers. There are structured mainly 3
+different kind of services, depends on abstraction level:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  \emph{Infrastructure as a Service} (IaaS) for raw compute, network,
+  storage and other low-level needs
+\item
+  \emph{Platform as a Service} (PaaS) for running applications by
+  software developers
+\item
+  \emph{Software as a Service} (SaaS) for provide applications to end
+  users
+\end{itemize}
+
+Anyway, even if cloud resoles a necessity sometimes there is the need of
+avoid \emph{outsourcing}, or using directly cloud technologies for
+providing services to customers.
+
+\section{Goal}\label{goal}
+
+Luckily, today there is a vast availability of free software for
+reproduce some cloud services.
+
+Starting from an overview of software development, systems management,
+software architectures and application environments, it will be provided
+some guidelines and researched existing available solutions, with the
+goal of following the process of PaaS management built on top of an
+IaaS, in a modern and scalable way, guaranteeing the governance through
+monitoring.
+
+The final goal is providing SaaS through a suitable environment for
+running applications. For this purpose, it will be used an application
+as case of study: \emph{Gasista Felice}.
+
+This solution will integrate:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  configuration of a IaaS
+\item
+  describing in a declarative way the PaaS resources
+\item
+  monitoring and benchmarking the live management of the whole platform
+  when the application will be in execution
+\end{itemize}
+
+The examined and studied solution covers the current state of art, in
+particular consists of \emph{Kubernetes} developed from Google's
+Engineers, RedHat's \emph{OpenShift}, but also \emph{CoreOS} from the
+namesake company, and HashiCorp's \emph{Terraform}.
+
+All the project comes as free software and are released on the GitHub
+portal.
+
+\section{Organization}\label{organization}
+
+Chapter 2 introduces the working environment in which this thesis was
+born and the technological context for which was conceived.
+
+Chapter 3 introduces containers' core concepts and the application to
+the use case.
+
+Chapter 4 describes how to bootstrap a IaaS/PaaS providing a production
+environment.
+
+Chapter 5 describes the stack of PaaS showing how applications could
+take advantage on it.
+
+Chapter 6 shows how to control, monitor, analyze, and visualize data
+about applications.
+
+Chapter 7 does a summary of this experience, and present some potential
+evolution of this project in order to achieve further targets.
