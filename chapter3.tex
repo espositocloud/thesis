@@ -206,18 +206,16 @@ customized.
 \section{Container Orchestration}\label{container-orchestration}
 
 Since an application is splitted in more well-defined components, there
-is also the need of a container orchestrator in order to run a multi
-container application.
+is also the need of a container orchestrator in order to run a multi-container application.
 
-For this target has been chosed \emph{Docker Compose}
+For this target has been chosen \emph{Docker Compose}
 (https://docs.docker.com/compose/), a basic tool to deploy applications
 in development, similar to Vagrant for VMs. Docker Compose will resolve
 the dependency graph of components and linked them together. While
 Docker Engine provides the core capabilities, Docker Compose represent
 the tool developers use the majority of time.
 
-Following che \emph{docker-compose.yml reference}
-(https://docs.docker.com/compose/yml/), the containers was orchestrated
+Following the \href{https://docs.docker.com/compose/yml/}{docker-compose.yml reference}, the containers was orchestrated
 (only for develoment) with \emph{Docker Compose}. So running the whole
 application is simple as run \texttt{docker-compose\ up} command!
 
