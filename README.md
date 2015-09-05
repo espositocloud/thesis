@@ -2,7 +2,7 @@
 
 Title: **Containerizing The Cloud For Managing Applications At Scale**
 
-[View](https://github.com/kobe25/thesis/blob/master/thesis.pdf) or [download](https://github.com/kobe25/thesis/raw/master/thesis.pdf) the generated PDF.
+View the PDF [here](https://www.overleaf.com/read/jkmzpbfrkyds)
 
 ## Done
 
