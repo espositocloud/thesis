@@ -40,7 +40,7 @@ The monitoring stack is deployed as an unique application, and includes
 \section{Time-Series Storage}\label{time-series-storage}
 
 InfluxDB is a distributed time-series database that fits well since it
-doesn't need a pre-defined schema for data, it's horizontally scalable
+doesn't need a predefined schema for data, it's horizontally scalable
 in the NoSQL way, support native data replication and include a familiar
 SQL-like language, \emph{InfluxQL}.
 
@@ -174,8 +174,8 @@ Heapster is deployed as \texttt{replicationController}, a
 and processing. Heka is modular and supports mainly 6 different type of
 plugins: inputs, splitters, decoders, filters, encoders and outputs. The
 first 3 are for gather and parse incoming data to \emph{Heka Message}
-standard, the filters parse all theese messages and the later 2 is for
-encoding and sending data somewhere else, for storaging or further
+standard, the filters parse all these messages and the later 2 is for
+encoding and sending data somewhere else, for storing or further
 processing.
 
 Heka permits to logs parsing, filtering, structuring them and send to
@@ -200,7 +200,7 @@ The output part is composed by encoding in \emph{InfluxDB schema} and
 sending data to \emph{InfluxDB HTTP APIs}.
 
 Heka is deployed on top of OpenShift as a simple
-\texttt{ReplicationController}.
+\texttt{replicationController}.
 
 \section{Data Visualization}\label{data-visualization}
 
@@ -219,6 +219,6 @@ in the beginning of 2014.
 \caption{Grafana logs dashboard}
 \end{figure}
 
-Grafana is deployed with a \texttt{ReplicationController}, a
+Grafana is deployed with a \texttt{replicationController}, a
 \texttt{Service} and a \texttt{Route} in order to be reached from the
 external.

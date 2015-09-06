@@ -49,7 +49,7 @@ Linux kernel capabilities such as \emph{namespaces} and \emph{cgroups}.
 Someone sees containers more as ``lightweight VMs'', so has been
 prepared an alternative base image
 (https://github.com/phusion/baseimage-docker). In this case there are a
-canonical init dademon as PID 0, instead of the application process
+canonical init daemon as PID 0, instead of the application process
 itself. This was particular useful in the early period since it was
 needed for some components that depends on specific system feature, such
 as syslog, and other purposes. But today Docker includes directly that
@@ -216,7 +216,7 @@ Docker Engine provides the core capabilities, Docker Compose represent
 the tool developers use the majority of time.
 
 Following the \href{https://docs.docker.com/compose/yml/}{docker-compose.yml reference}, the containers was orchestrated
-(only for develoment) with \emph{Docker Compose}. So running the whole
+(only for development) with \emph{Docker Compose}. So running the whole
 application is simple as run \texttt{docker-compose\ up} command!
 
 \begin{figure}[htbp]

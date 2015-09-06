@@ -1,27 +1,15 @@
 \chapter{Background}\label{background}
 
-This chapter introduces the technological context in which this thesis
-was born with some references to the working environment in which it is
-implemented.
+This chapter introduces the technological context in which this thesis was born with some references to the working environment in which it is implemented.
 
-Since this document covers the workflow from designing application
-architecture in containers to deploying it in a real production
-environment, as well as using the application in development and QA
-environments, the context is presented from multiple points of view:
+Since this document covers the workflow from designing application architecture in containers to deploying it in a real production environment, as well as using the application in development and QA environments, the context is presented from multiple points of view:
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  the automation of the IT operations
-\item
-  the evolution of the development workflow
-\item
-  the scalability of architectures in the cloud
-\item
-  the flexibility of multiple environments
-\item
-  the key factors of Free Software and Sharing Economy that has led
-  useful tools and practices used to develop the project
+\item the automation of the IT operations
+\item the evolution of the development workflow
+\item the scalability of architectures in the cloud
+\item the flexibility of multiple environments
+\item the key factors of Free Software and Sharing Economy that has led useful tools and practices used to develop the project
 \end{itemize}
 
 \section{Manageability in IT
@@ -39,22 +27,22 @@ Common GNU/Linux distributions comes with a built-in package manager
 that provides a powerful entrypoint for installing and managing
 packages, from libraries to graphical applications. Using this feature,
 historically system administrators managed servers (IaaS)
-\emph{manually} directly via shell, upgrading the system, installing and
+manually directly via shell, upgrading the system, installing and
 configuring the necessary packages. This approach introduces human
-errors and non reproducible operations, so it's flacking when scaling
+errors and non reproducible operations, so it's ugly when scaling
 the numbers of engineers, hosts, applications and tasks. For example,
 it's difficult evolving the environment changing all configurations,
 because there is not a formal way to do it.
 
 Even if the manual management is immediate and doesn't need
 (pre)organizations, it has several limits. A first step derives from
-other industrial revolutions, minimizing the human intervation and
-\emph{automating} all operations as possible, via \emph{scripting} or
-dedicated tools for \emph{application deployment} and
-\emph{configuration management} (e.g.: Chef, Puppet, SaltStack,
+other industrial revolutions, minimizing the human intervention and
+\textit{automating} all operations as possible, via scripting or
+dedicated tools for \textit{application deployment} and
+\textit{configuration management} (e.g.: Chef, Puppet, SaltStack,
 Ansible). So humans doesn't do things directly, but instruct machines to
 do it in a more efficient, reproducible and reliable way. A consequence
-of this, there is the \emph{Pets vs Cattle} contrast, seeing the
+of this, there is the \textit{Pets vs Cattle} contrast, seeing the
 opposition of who thinks the server hostnames should be choice
 creatively (as pets) or in a more industrial and pragmatic way (as
 cattle).
@@ -74,7 +62,7 @@ cost and complexity of buying and managing the underlying hardware and
 software layers. {[}\ldots{}{]}
 \end{quote}
 
-In 2009 \emph{Ian Murdock}, the Debian founder, in its article \emph{Do
+In 2009 \textit{Ian Murdock}, the Debian founder, in its article \emph{Do
 operating systems still matter?}\cite{DoOperatingSystemsStillMatter}
 concluded that today developers using a PaaS are not more concerned
 about underlying hardware or operating system related features, but also
@@ -82,7 +70,7 @@ about platform-level exposed features, so operating systems should be
 rethinked in order to expose a better, more integrated higher level
 experience.
 
-Also RedHat in \emph{The Platform Abstraction Advantage of
+Also RedHat in \textit{The Platform Abstraction Advantage of
 PaaS}\cite{ThePlatformAbstractionAdvantageOfPaaS} concludes with the
 following:
 
@@ -121,52 +109,55 @@ PaaS & automation & yes\tabularnewline
 \section{Velocity in Development
 Workflow}\label{velocity-in-development-workflow}
 
-In 2001 was published the \emph{Agile Manifesto}, a set of 12 principles
-that represent a first step towards a faster and more efficient approach
-to developers needs, going beyond the traditional \emph{waterfall}
-development. From development workflow, it's based on a \emph{Continuous
-Integration} (CI) system running tests automatically, notifying to users
-when fails.
+In 2001 was published the \textit{Agile Manifesto} (http://www.agilemanifesto.org/), a set of 12 principles that represent a first step towards a faster and more efficient approach to developers needs, going beyond the traditional \textit{waterfall} development. From development workflow, it's based on a \textit{Continuous Integration} (CI) system running tests automatically, notifying to users when fails.
 
-While Agile methodologies made the development faster, the users will
-not receive this since delivery of applications remains slow. That
-create the necessity for a more collaboration/interaction between
-development and operations/delivery teams in order to automating the
-application deployment as soon as it passed the tests. This is called
-\emph{Continuous Delivery}, extending the CI concept to production.
+While Agile methodologies made the development faster, the users will not receive this since delivery of applications remains slow. That create the necessity for a more collaboration/interaction between development and operations/delivery teams in order to automating the application deployment as soon as it passed the tests. This is called \textit{Continuous Delivery}, extending the CI concept to production.
 
-Consequently, also development and production environment should getting
-close, aim to the so called \emph{dev/prod parity}. This way to build
-applications was formerly by Heroku, popular PaaS, with \emph{The
+Consequently, also development and production environment should getting close, aim to the so called \textit{dev/prod parity}. This way to build applications was formerly by Heroku, popular PaaS, with \textit{The
 Twelve-Factor App} (http://12factor.net/), a 12 good practices to apply
-at SaaS. Separate cleary development and operations through a contract,
+at SaaS:
+
+\begin{enumerate}
+\item Codebase:  One codebase tracked in revision control, many deploys
+\item Dependencies:  Explicitly declare and isolate dependencies
+\item Config: Store config in the environment
+\item Backing Services:  Treat backing services as attached resources
+\item Build, release, run:  Strictly separate build and run stages
+\item Processes:  Execute the app as one or more stateless processes
+\item Port binding:  Export services via port binding
+\item Concurrency:  Scale out via the process model
+\item Disposability:  Maximize robustness with fast startup and graceful shutdown
+\item Dev/prod parity:  Keep development, staging, and production as similar as possible
+\item Logs:  Treat logs as event streams
+\item Admin processes:  Run admin/management tasks as one-off processes
+\end{enumerate}
+
+12factor separate clearly development and operations through a contract,
 and represent the beginning of DevOps era. Other PaaS shared and was
-born on top of these principles, such as \emph{Deis} or
-\emph{OpenShift}.
+born on top of these principles, such as \textit{Deis} or
+\textit{OpenShift}.
 
 In a DevOps context there are usually at least these components:
-
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+
 \item
-  \emph{Source Code Management} provides repositories hosting for Git
-  (or other source code versioning system) projects (e.g.: \emph{Gogs},
-  \emph{GitLab})
+  \textit{Source Code Management} provides repositories hosting for Git
+  (or other source code versioning system) projects (e.g.: \textit{Gogs},
+  \textit{GitLab})
 \item
-  \emph{Continuous Integration/Continuous Delivery} execute automated
+  \textit{Continuous Integration/Continuous Delivery} execute automated
   tests and send somewhere else when software is ready to deploy in
-  staging, QA or production environment (e.g.: \emph{Travis CI},
-  \emph{GitLab CI}, \emph{Drone}, \emph{Jenkins})
+  staging, QA or production environment (e.g.: \textit{Travis CI},
+  \textit{GitLab CI}, \textit{Drone}, \textit{Jenkins})
 \item
-  \emph{Platform as a Service} is the core of infrastructure and
+  \textit{Platform as a Service} is the core of infrastructure and
   automatically manage the applications, including the upgrade, some
-  monitoring features (e.g.: \emph{Deis}, \emph{OpenShift})
+  monitoring features (e.g.: \textit{Deis}, \textit{OpenShift})
 \end{itemize}
 
 References:
-
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+
 \item
   http://radar.oreilly.com/2012/06/what-is-devops.html
 \item
@@ -211,35 +202,29 @@ components.
 
 While this lead several advantage, with increasing the sizing of
 application, it could be to big making hard developing and scaling. The
-\emph{microservices} pattern make the modularization another step, and
+\textit{microservices} pattern make the modularization another step, and
 proposes loosely coupled, but independent applications that communicate
 via APIs. This make possible use the best technology (language,
-framework, database) for every specific need. Some of them could also be
-\emph{stateless}, that does not process data but only
+framework, database) for every specific need. Some of them could also be stateless for data processing only, without persistent storage capability.
 
 References:
-
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  http://microservices.io/articles/scalecube.html
-\item
-  http://nginx.com/blog/introduction-to-microservices/
-\item
-  http://martinfowler.com/articles/microservices.html
-\item
-  http://www.reactivemanifesto.org/
+
+\item http://microservices.io/articles/scalecube.html
+\item http://nginx.com/blog/introduction-to-microservices/
+\item http://martinfowler.com/articles/microservices.html
+\item http://www.reactivemanifesto.org/
 \end{itemize}
 
 \begin{longtable}[c]{@{}llll@{}}
 \caption{Summary of Evolution in Software Architecture}\tabularnewline
 \toprule
-Architecture & Vertical Scaling & Horizontal Scaling & Data partinioning
+Architecture & Vertical Scaling & Horizontal Scaling & Data partitioning
 Scaling\tabularnewline
 \midrule
 \endfirsthead
 \toprule
-Architecture & Vertical Scaling & Horizontal Scaling & Data partinioning
+Architecture & Vertical Scaling & Horizontal Scaling & Data partitioning
 Scaling\tabularnewline
 \midrule
 \endhead
@@ -268,11 +253,11 @@ equivalent, with a little of overhead.
 At the beginning of 2013, was announced Docker, a \emph{container}
 runtime (https://www.docker.com/whatisdocker) that aims to be the unit
 of launching application components, running reproducible environments,
-and concepted for developers friendly via Git-like CLI. Containers
+and conceived for developers friendly via Git-like CLI. Containers
 doesn't offer all the isolation of VMs, but reduces the overhead and
 permits to optimize resources.
 
-Container technologies already exists, but historically were thinked as
+Container technologies already exists, but historically were thought as
 lightweight VMs in order to serve functional-complete operating systems.
 Instead, Docker focused on deploying only single processes, separating
 the OS from the application layers. Today containers, and Docker in
@@ -306,58 +291,32 @@ Containers & yes & high\tabularnewline
 Economy}\label{key-factors-free-software-and-sharing-economy}
 
 Free Software is based on the following 4 simple principles:
-
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Freedom 0: The freedom to run the program for any purpose.
-\item
-  Freedom 1: The freedom to study how the program works, and change it
-  to make it do what you wish.
-\item
-  Freedom 2: The freedom to redistribute copies so you can help your
-  neighbor.
-\item
-  Freedom 3: The freedom to improve the program, and release your
-  improvements (and modified versions in general) to the public, so that
-  the whole community benefits.
+\item Freedom 0: The freedom to run the program for any purpose.
+\item Freedom 1: The freedom to study how the program works, and change it to make it do what you wish.
+\item Freedom 2: The freedom to redistribute copies so you can help your neighbor.
+\item Freedom 3: The freedom to improve the program, and release your improvements (and modified versions in general) to the public, so that the whole community benefits.
 \end{itemize}
 
-With Free Software we have the opportunities of:
-
+Free Software enables the opportunities of:
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  keep control of software
-\item
-  learn from design choices and code implementation
-\item
-  improve the software, with bug-fixing and feature integration
-\item
-  working on shared projects optimizing costs
-\item
-  obtain higher quality
+\item keeping control over the software
+\item learning from other design choices and code implementation
+\item improving the software with bug-fixing and feature integration
+\item optimizing costs with working on shared projects
+\item obtain higher quality
 \end{itemize}
 
-Free Software enables reuse and leverages the solutions, and enables
-rapid feedbacks lowering the \emph{time to release}. In the web/cloud
-age, Free Software gained a significant role and is everywhere. It's a
-key on which many companies and services rely their trust.
+Free Software enables reuse and leverages the solutions, and enables rapid feedbacks lowering the "time to release". In the web/cloud age, Free Software gained a significant role and is everywhere. It's a key on which many companies and services rely their trust.
 
-The \emph{Sharing Economy} focuses on relations (a major interaction
-between providers and consumers), enhances the community, creates
-discussion places, and makes easier direct feedbacks. The Sharing
-Economy identifies a collaborative economy, based on cooperation. The
-Free Software fits very well in the Sharing Economy for the Information
-Technology topics since it avoid lock-in and other restrictive/bad
-practices of traditional economy, that aim to centralization instead of
-distribution and collaboration.
+The \textit{Sharing Economy} (http://www.thepeoplewhoshare.com/blog/what-is-the-sharing-economy) focuses on relations (a major interaction between providers and consumers), enhances the community, creates discussion places, and makes easier direct feedbacks. The Sharing Economy identifies a collaborative economy, based on cooperation. The Free Software fits very well in the Sharing Economy for the Information
+Technology topics since it avoid lock-in and other restrictive/bad practices of traditional economy, that aim to centralization instead of distribution and collaboration.
 
 \section{Case of Study: beFair and Gasista
 Felice}\label{case-of-study-befair-and-gasista-felice}
 
-\emph{Gasista Felice} is the main project developed by \emph{beFair}, a
-small team involved in the \emph{Free Software} and \emph{Sharing
+\textit{Gasista Felice} is the main project developed by \textit{beFair}, a
+small team involved in the \textit{Free Software} and \textit{Sharing
 Economy} networks. beFair is the working environment thanks to which it
 has been possible this thesis project.
 
@@ -388,85 +347,59 @@ in last decades from multiple point of views:
 & 1990's & 2000's & 2010's\tabularnewline
 \midrule
 \endhead
-\emph{Development Workflow} & Waterfall & Agile & DevOps\tabularnewline
-\emph{IT Operations} & IaaS & IaaS+ & PaaS\tabularnewline
-\emph{Software Architecture} & Monolith & Layered Monolith &
+\textit{Development Workflow} & Waterfall & Agile & DevOps\tabularnewline
+\textit{IT Operations} & IaaS & IaaS+ & PaaS\tabularnewline
+\textit{Software Architecture} & Monolith & Layered Monolith &
 Microservices\tabularnewline
-\emph{Application Environment} & Physical Machines & Virtual Machines &
+\textit{Application Environment} & Physical Machines & Virtual Machines &
 Containers\tabularnewline
 \bottomrule
 \end{longtable}
 
-The solution provided is a Proof of Concept (PoC), thinked beyond
-academic purpose for future real use, of a pre-configured free/libre
-toolset that enables IT operators to build a PaaS on top of a IaaS/cloud
-infrastructure, who aims to be optimal for scaling microservices, and
-DevOps-oriented via CD and container as the atomic unit.
+The solution provided is a Proof of Concept (PoC), thought beyond academic purpose for future real use, of a pre-configured free/libre toolset that enables IT operators to build a PaaS on top of a IaaS/cloud infrastructure, who aims to be optimal for scaling microservices, and DevOps-oriented via CD and container as the atomic unit.
 
 Has been follow some guidelines:
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  elasticity
-\item
-  lightweight (should not occupy too much resources, compiled languages
-  over interpreted/virtualized ones)
-\item
-  reuse pre-existent components (don't reinvent the wheel)
-\item
-  reuse pre-existent network layers (avoid dedicated transport layer via
+\item elasticity
+\item lightweight (should not occupy too much resources, compiled languages
+  over interpreted ones)
+\item reuse pre-existent components (don't reinvent the wheel)
+\item reuse pre-existent network layers (avoid dedicated transport layer via
   agents/daemons, to install/configure/manage/update, and more surface
   attack)
-\item
-  composable pieces with simple interface (composability/pluggability
+\item composable pieces with simple interface (composability/pluggability
   over monolith)
-\item
-  convention over configuration: by default it should works (quite)
+\item convention over configuration: by default it should works (quite)
   out-of-the-box, but remain customizable (low entry wall)
-\item
-  automation everywhere possible, few manual commands to install/deploy
-\item
-  avoid tools requires programming language or custom syntax for
+\item automation everywhere possible, few manual commands to install/deploy
+\item avoid tools requires programming language or custom syntax for
   configuration
-\item
-  stay on shoulders of giants (avoid too small community and risk to
+\item stay on shoulders of giants (avoid too small community and risk to
   adopt tools without a solid/active contributor community)
-\item
-  minimize external dependencies
-\item
-  low dependency from IaaS for (future) private cloud
+\item minimize external dependencies
+\item low dependency from IaaS for (future) private cloud
 \end{itemize}
 
 There are recent similar projects that should be quoted for
 completeness:
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  \emph{Apollo}\cite{Apollo} from Capgemini, an open-source platform for
+\item \textit{Apollo}\cite{Apollo} from Capgemini, an open-source platform for
   apps, microservices and big data. It consists of Mesos cluster
   provisioning and orchestration using Packer and Terraform
-\item
-  \emph{MANTL}\cite{MANTL} from Cisco Cloud, formerly
-  \emph{Microservices Infrastructure}, is a modern platform for rapidly
+\item \textit{MANTL}\cite{MANTL} from Cisco Cloud, formerly
+  \textit{Microservices Infrastructure}, is a modern platform for rapidly
   deploying globally distributed services
 \end{itemize}
 
 With these goals in mind, the following toolset has been chosen:
-
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Terraform: Infrastructure Provisioning
-\item
-  Docker Engine: Container Runtime
-\item
-  CoreOS: GNU/Linux distribution for containers
-\item
-  Kubernetes: Container Cluster Orchestration
-\item
-  OpenShift v3: PaaS for modern workflow
+\item Terraform: Infrastructure Provisioning
+\item Docker Engine: Container Runtime
+\item CoreOS: GNU/Linux distribution for containers
+\item Kubernetes: Container Cluster Orchestration
+\item OpenShift v3: PaaS for modern workflow
 \end{itemize}
 
 \begin{figure}[htbp]

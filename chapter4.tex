@@ -142,6 +142,8 @@ entrypoint -- http://befaircloud.me
 
 Now the whole cluster is up and running!
 
+For enabling some basic services and monitoring stack, it's needed connecting via SSH to master, and running the \texttt{openshift/base} script, present on the home of the \texttt{core} user.
+
 For deleting all resources (from VMs to DNS records), it's needed running \texttt{make destroy} that consists of:
 \begin{enumerate}
 \item \texttt{terraform plan -destroy} for planning deletion of all resources
@@ -173,7 +175,7 @@ Once the master has been correctly deployed, the nodes could be deployed:
 
 The configuration described in Cloud Config is necessary for:
 \begin{itemize}
-\item enable SSH login to \texttt{core} user with provided key
+\item enable SSH log-in to \texttt{core} user with provided key
 \item provide a SystemD unit for bootstrapping the host and write the OpenShift/Kubernetes configuration (different between master and node)
 \item provide a SystemD unit for running the main OpenShift/Kubernetes binary (different between master and node)
 \end{itemize}
