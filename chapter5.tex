@@ -121,6 +121,12 @@ OpenShift stores the own objects in Etcd under \texttt{/openshift.io} key.
 
 In order to create an instance of Gasista Felice, it needed running with \texttt{openshift/gasistafelice} script from the master.
 
+\begin{figure}[htbp]
+\centering
+\includegraphics{media/ch5-openshift.png}
+\caption{OpenShift dashboard}
+\end{figure}
+
 A small note derived on experience in deploying Gasista Felice on top of OpenShift:  while in development the default \texttt{postgresql:9.4} image worked fine, on OpenShift it had some problems probably due to permissions. So it has been used a dedicated image for OpenShift, providing PostgreSQL 9.2, also compatible with Gasista Felice.
 
 OpenShift comes with a set of components:
@@ -132,13 +138,7 @@ OpenShift comes with a set of components:
 
 All incoming requests come to HAProxy first, than reaches the application web server, like NGINX.
 
-Future development will include a more extensively use of OpenShift features, from built-in container image \textit{registry}, to concepts for enabling Continuous Delivery:
-
-\begin{itemize}
-\item \textit{build} is the process of creating Docker images from scratch or other images
-\item \textit{imageStream} represent an image storaged in a repository
-\item \textit{deploymentConfig} extends \texttt{replicationController} enabling rolling updates in response to signals
-\end{itemize}
+Future development will include a more extensively use of OpenShift features, from built-in container image \textit{registry}, to concepts for enabling Continuous Delivery such as \textit{build}, \textit{imageStream} and \textit{deploymentConfig}.
 
 \section{Benchmarks}\label{benchmarks}
 
