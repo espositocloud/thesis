@@ -95,18 +95,13 @@ is composed by a \texttt{replicationController} and a \texttt{service}:
 
 \section{Resource Gathering}\label{resource-gathering}
 
-Kubernetes comes with built-in cAdvisor
-(https://github.com/google/cadvisor) in Kubelet, for resource metrics
-gathering, such as CPU, RAM, I/O, network, etc.
+Kubernetes comes with built-in cAdvisor (https://github.com/google/cadvisor) in Kubelet, for resource metrics gathering, such as CPU, RAM, I/O, network, etc.
 
-Heapster (https://github.com/kubernetes/heapster) is the Kubernetes
-cluster monitoring system, that gather metrics from nodes and send them
-to InfluxDB.
+Heapster (https://github.com/kubernetes/heapster) is the Kubernetes cluster monitoring system, that gather metrics from nodes and send them to InfluxDB.
 
 The exported metrics are:
-
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+
 \item
   uptime: Number of milliseconds since the container was started
 \item
@@ -143,7 +138,6 @@ The exported metrics are:
 While the exported labels are:
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
 \item
   hostname: Hostname where the container ran
 \item
@@ -170,17 +164,9 @@ Heapster is deployed as \texttt{replicationController}, a
 
 \section{Log Processing}\label{log-processing}
 
-\emph{Heka} is a framework developed by Mozilla for easy data collection
-and processing. Heka is modular and supports mainly 6 different type of
-plugins: inputs, splitters, decoders, filters, encoders and outputs. The
-first 3 are for gather and parse incoming data to \emph{Heka Message}
-standard, the filters parse all these messages and the later 2 is for
-encoding and sending data somewhere else, for storing or further
-processing.
+\textit{Heka} is a framework developed by Mozilla for easy data collection and processing. Heka is modular and supports mainly 6 different type of plugins: inputs, splitters, decoders, filters, encoders and outputs. The first 3 are for gather and parse incoming data to \textit{Heka Message} standard, the filters parse all these messages and the later 2 is for encoding and sending data somewhere else, for storing or further processing.
 
-Heka permits to logs parsing, filtering, structuring them and send to
-InfluxDB. In this example will use Gasista Felice's NGiNX component for
-generating logs and \emph{boom} for doing a lot of requests.
+Heka permits to logs parsing, filtering, structuring them and send to InfluxDB. In this example will use Gasista Felice's NGiNX component for generating logs and \textit{boom} for doing a lot of requests.
 
 \begin{figure}[htbp]
 \centering
@@ -188,24 +174,17 @@ generating logs and \emph{boom} for doing a lot of requests.
 \caption{The Heka Data Flow}
 \end{figure}
 
-The input part is composed by the \emph{Docker Log Input}, build on top
-of \emph{Logspout} that acquires stdout/stderr of running containers
-from the Docker Engine Unix socket, and \emph{NGiNX access} and
-\emph{error decoders}.
+The input part is composed by the \emph{Docker Log Input}, build on top of \emph{Logspout} that acquires stdout/stderr of running containers from the Docker Engine Unix socket, and \emph{NGiNX access} and \emph{error decoders}.
 
-Filtering consist of \emph{HTTP Status Graph} that filter NGiNX access
-logs and generate an HTTP response code based graph.
+Filtering consist of \emph{HTTP Status Graph} that filter NGiNX access logs and generate an HTTP response code based graph.
 
-The output part is composed by encoding in \emph{InfluxDB schema} and
-sending data to \emph{InfluxDB HTTP APIs}.
+The output part is composed by encoding in \emph{InfluxDB schema} and sending data to \emph{InfluxDB HTTP APIs}.
 
-Heka is deployed on top of OpenShift as a simple
-\texttt{replicationController}.
+Heka is deployed on top of OpenShift as a simple \texttt{replicationController}.
 
 \section{Data Visualization}\label{data-visualization}
 
-Grafana is a metrics dashboard and graph editor, born as fork of Kibana
-in the beginning of 2014.
+Grafana is a metrics dashboard and graph editor, born as fork of Kibana in the beginning of 2014.
 
 \begin{figure}[htbp]
 \centering
@@ -213,12 +192,27 @@ in the beginning of 2014.
 \caption{InfluxDB logs dashboard}
 \end{figure}
 
+The first 2 graphs in Grafana dashboard show data derived from logs processing, while the last 2 from Heapster:
+
+\begin{verbatim}
+# Show the network traffic
+select mean(body_bytes_sent) from "nginx.access"
+
+# Show the success and failure responses
+select count(status) from "nginx.access" where status < 400
+select count(status) from "nginx.access" where status >= 400
+
+# Show the CPU load of backend
+select derivative(value) from "cpu/usage_ns_cumulative" where container_name="back"
+
+# Show the memory usage of backend
+select value from "memory/usage_bytes_gauge" where container_name="back"
+\end{verbatim}
+
 \begin{figure}[htbp]
 \centering
 \includegraphics{media/ch6-grafana.png}
-\caption{Grafana logs dashboard}
+\caption{Grafana dashboard}
 \end{figure}
 
-Grafana is deployed with a \texttt{replicationController}, a
-\texttt{Service} and a \texttt{Route} in order to be reached from the
-external.
+Grafana is deployed with a \texttt{replicationController}, a \texttt{Service} and a \texttt{Route} in order to be reached from the external.

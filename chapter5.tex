@@ -27,10 +27,9 @@ CoreOS releases are organized in 3 channels: alpha, beta and stable. Alpha is ge
 
 Most popular alternatives to CoreOS are Rancher OS (http://rancher.com/rancher-os/), Atomic (http://www.projectatomic.io/) by Red Hat and Ubuntu Snappy (http://www.ubuntu.com/cloud/tools/snappy) by Canonical.
 
-\section{Microservices Scaling and
-Orchestration}\label{microservices-scaling-and-orchestration}
+\section{Microservices Scaling and Orchestration}\label{microservices-scaling-and-orchestration}
 
-Kubernetes (http://kubernetes.io/) has been announced at Google I/O in June 2014, it's a cluster management system, a framework for container scheduling and orchestration in a clustered environment. Kubernetes has been developed by the same engineers who developed the current Google infrastructure, and take advantage of that experience.  While CoreOS provides the basic for running containers, Kubernetes enables an higher level through the container scheduling and orchestration across all the cluster.
+Kubernetes (http://kubernetes.io/) has been announced at Google I/O in June 2014, it's a cluster management system, a framework for container scheduling and orchestration in a clustered environment. Kubernetes has been developed by the same engineers who developed the current Google infrastructure, and takes advantage of that experience.  While CoreOS provides the basic for running containers, Kubernetes enables an higher level through the container scheduling and orchestration across all the cluster.
 
 From the experience at Google, Kubernetes introduces some additional concepts on top of containers:
 \begin{itemize}
@@ -47,11 +46,6 @@ While containers could seen as "atoms", pods could be considered "molecules".  R
 \caption{Pods and Replication Controllers}
 \end{figure}
 
-\begin{figure}[htbp]
-\centering
-\includegraphics{media/ch5-services.png}
-\caption{Scaling Pods with Kubernetes services}
-\end{figure}
 A basic example of pod composed by 2 containers could be an application server and a Redis instance for caching from database.
 
 In Gasista Felice every component is composed by a pod, a replicationController and a service for providing access to it.  Since there are 4 components, a minimal instance of the application includes 4 service, 4 replication controller and 4 pods.  The number of the pods could be changed dynamically.
@@ -79,10 +73,15 @@ And 2 more components in nodes:
 \caption{Replicas and Scheduling}
 \end{figure}
 
+\begin{figure}[htbp]
+\centering
+\includegraphics{media/ch5-services.png}
+\caption{Scaling Pods with Kubernetes services}
+\end{figure}
+
 On July 20, 2015 the \textit{Linux Foundation} announced the \textit{Cloud Native Computing Foundation}\cite{CloudNativeComputingFoundation} in order to standardize the orchestration of components in a cloud environment, taking Kubernetes as one of the starting point.
 
-\section{PaaS for Deploying
-Applications}\label{paas-for-deploying-applications}
+\section{PaaS for Deploying Applications}\label{paas-for-deploying-applications}
 
 Even if Kubernetes represents a great solution for scaling services, it lacks the concept of application and
 the development workflow, so it's more a tool for system specialists. In order to reach a PaaS abstraction and deploying real applications, there is needed another level on top of Kubernetes.

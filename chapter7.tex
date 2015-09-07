@@ -14,28 +14,26 @@ and from lower-level components, like Mesos.
 
 \section{Future Developments}\label{future-developments}
 
-At this point, there are a large variety of potential improvements.
-
-From the monitoring and logging point of view, could be enabled an
-alerting system directly via Heka alert encoder plug-in, or via a
-dedicated software like \emph{Sentry} or \emph{Bosun}.
-
-The main point is \emph{high availability}\cite{HighAvailability}.
+At this point, there are a large variety of potential improvements, mainly about \textit{high availability}\cite{HighAvailability}.
 
 Applications running on top of the platform that use traditional
 relational database such as PostgreSQL, could be configured for high
 availability also for data
 (https://www.compose.io/articles/high-availability-for-postgresql-batteries-not-included/).
 
+From the monitoring and logging point of view, it could be enabled an
+alerting system directly via Heka alert encoder plug-in, or via a
+dedicated software like \textit{Sentry} or \textit{Bosun}.
+
 From the cluster perspective, there is the possibility of rolling update
 or auto-scaling of the cluster itself. In fact with passing the time,
 the stack should be updated, and the applications deployed on cluster
 could need globally more resources. A way to do this is monitoring the
-global load of the cluster, and instruct Terraform for vary the number
+global load of the cluster, and instruct Terraform for varying the number
 of nodes accordingly to it.
 
 Beyond the single cluster, there is an emerging proposal for
-\emph{cluster federation}, called Ubernetes, that enables
+\textit{cluster federation}, called Ubernetes, that enables
 high-availability with geographically distributed Kubernetes clusters.
 
 With that global distributed infrastructure, it's possible build

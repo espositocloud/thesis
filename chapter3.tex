@@ -6,7 +6,7 @@ application could be containerized.
 
 \section{Container Runtime}\label{container-runtime}
 
-\emph{Docker Engine} was released at the beginning of 2013 from a PaaS
+\textit{Docker Engine} was released at the beginning of 2013 from a PaaS
 company, as a lightweight alternative to VMs to running and develop
 components of applications. Since then, it gained consent by large part
 of IT industry and today it's the de-facto standard for container
@@ -19,7 +19,7 @@ processes, separating the application from the OS.
 Some of the advantages in using Docker are:
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+
 \item
   reproducible and standardized environments between development,
   staging, QA and production
@@ -31,8 +31,8 @@ Some of the advantages in using Docker are:
 \end{itemize}
 
 Under the hood, Docker Engine it's composed mainly by a Git-like command
-line interface, a daemon and \emph{libcontainer}, a library that use
-Linux kernel capabilities such as \emph{namespaces} and \emph{cgroups}.
+line interface, a daemon and \textit{libcontainer}, a library that use
+Linux kernel capabilities such as \textit{namespaces} and \textit{cgroups}.
 
 \begin{figure}[htbp]
 \centering
@@ -55,22 +55,12 @@ needed for some components that depends on specific system feature, such
 as syslog, and other purposes. But today Docker includes directly that
 kind of features, so this need is decreased.
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  Part 1
-  (http://blog.phusion.nl/2015/01/20/docker-and-the-pid-1-zombie-reaping-problem/)
-\item
-  Part 2
-  (http://blog.phusion.nl/2015/01/20/baseimage-docker-fat-containers-treating-containers-vms/)
-\end{itemize}
-
-There are also alternative container runtimes, such as \emph{rkt} (read
+There are also alternative container runtimes, such as \textit{rkt} (read
 ``rocket'') (https://github.com/coreos/rocket) that focuses on
 reliability and security in production environment.
 
-On June 22, 2015 was announced the \emph{Open Container
-Project}\cite{OpenContainerProject} from \emph{Linux Foundation} and
+On June 22, 2015 was announced the \textit{Open Container
+Project}\cite{OpenContainerProject} from \textit{Linux Foundation} and
 major companies with the target of an industry-wide standard, taking
 Docker as the starting point.
 
@@ -85,31 +75,28 @@ In a traditional way, one would have said that the components are
 AngularJS for frontend, and Django and PostgreSQL for backend. Instead,
 in DevOps-oriented context with dev/prod parity, components should be
 the same used in production:
-
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+
 \item
-  \emph{NGiNX}, web/caching server and reverse proxy
+  \textit{NGINX}, web/caching server and reverse proxy
 \item
-  \emph{harp}, frontend server with built-in preprocessors
+  \textit{harp}, frontend server with built-in preprocessors
 \item
-  \emph{uWSGI}, web application server
+  \textit{uWSGI}, web application server
 \item
-  \emph{PostgreSQL}, relational database
+  \textit{PostgreSQL}, relational database
 \end{itemize}
 
-In addition, following che \emph{12factor} guidelines, a convention is
-to use:
-
+In addition, following che \textit{12factor} guidelines, a convention is to use:
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+
 \item
   environment variables for configuration
 \item
   TCP sockets for inter-container communication
 \end{itemize}
 
-So Django settings should be based on \emph{environment variables} with
+So Django settings should be based on \textit{environment variables} with
 some defaults. Has been chosen \texttt{APP\_ENV} as main variable that
 determines a different behavior of backend. For example, when in
 development environment, there is the need of reloading app as soon as
@@ -126,7 +113,7 @@ libraries), and only well defined directories should be writable
 As of virtual machines consists of a base disk image and one or more
 instances, so containers providers base images and one or more instances
 (``real'' containers) running on. In particular, Docker applies the
-concept of \emph{Copy on Write} (CoW) that consist of, starting from a
+concept of \textit{Copy on Write} (CoW) that consist of, starting from a
 well-defined file system status, write only the differences from it, in
 order to minimize the disk usage.
 
@@ -134,16 +121,16 @@ There are base images of common operating system (Debian, Ubuntu,
 CentOS) but also language-specific runtimes (Python, NodeJS, Java).
 Starting from here it's possible build custom images contains the
 application components. In addition, every image has one or more
-\emph{tags} in order to provide different versions: e.g.~in
+\textit{tags} in order to provide different versions: e.g.~in
 \texttt{debian:8} the \texttt{8} is the tags part that identifies
-\emph{Debian Jessie}, but it's also possible define the Debian testing
+\textit{Debian Jessie}, but it's also possible define the Debian testing
 image with \texttt{debian:9}.
 
-The main way to build Docker images is via \emph{Dockerfiles}, files
+The main way to build Docker images is via \textit{Dockerfiles}, files
 that include:
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
+
 \item
   the base image via the \texttt{FROM} directive
 \item
@@ -180,7 +167,7 @@ environment for potential other containerized applications.
 The backend of Gasista Felice is an application written in Python with
 Django web framework, and served by uWSGI application server. In the
 base image has been setted default values for uWSGI, Python, Debian and
-PostgreSQL client, were added an \emph{app} Unix user/group and were
+PostgreSQL client, were added an \textit{app} Unix user/group and were
 installed uWSGI and Python core packages. Note that since uWSGI is the
 default process, when a real container will be started, uWSGI take all
 the configuration from these defaults and eventual future additions of
@@ -189,7 +176,7 @@ overriding.
 Then the Dockerfile of Gasista Felice backend, including installation of
 dependencies, and copying of application code.
 
-The NGiNX/proxy component also has a base image that move logging to
+The NGINX/proxy component also has a base image that move logging to
 stdout/stderr and other small customizations.
 
 Instead the Gasista Felice proxy Dockerfile provide a production-ready
@@ -198,17 +185,16 @@ configuration, with static files caching.
 Another components consist of the Harp server that served static
 processed content of frontend. In future this component could be
 eliminated, since once the files are generated they could be served
-directly from NGiNX.
+directly from NGINX.
 
 The PostgreSQL image instead is ready as it is, so it's not be
 customized.
 
 \section{Container Orchestration}\label{container-orchestration}
 
-Since an application is splitted in more well-defined components, there
-is also the need of a container orchestrator in order to run a multi-container application.
+Since an application is splitted in more well-defined components, there is also the need of a container orchestrator in order to run a multi-container application.
 
-For this target has been chosen \emph{Docker Compose}
+For this target has been chosen \textit{Docker Compose}
 (https://docs.docker.com/compose/), a basic tool to deploy applications
 in development, similar to Vagrant for VMs. Docker Compose will resolve
 the dependency graph of components and linked them together. While
@@ -216,8 +202,8 @@ Docker Engine provides the core capabilities, Docker Compose represent
 the tool developers use the majority of time.
 
 Following the \href{https://docs.docker.com/compose/yml/}{docker-compose.yml reference}, the containers was orchestrated
-(only for development) with \emph{Docker Compose}. So running the whole
-application is simple as run \texttt{docker-compose\ up} command!
+(only for development) with \textit{Docker Compose}. So running the whole
+application is simple as run \texttt{docker-compose up} command!
 
 \begin{figure}[htbp]
 \centering
