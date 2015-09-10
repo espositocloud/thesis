@@ -2,33 +2,18 @@
 
 When the Internet and the Web started to spread all over the world, a first era of cloud computing\footnote{Cloud computing is a model for enabling ubiquitous network access to a shared pool of configurable computing resources.
 
-Cloud computing and storage solutions provide users and enterprises with various capabilities to store and process their data in third-party data centers. It relies on sharing of resources to achieve coherence and economies of scale, similar to a utility (like the electricity grid) over a network. At the foundation of cloud computing is the broader concept of converged infrastructure and shared services.
+Cloud computing and storage solutions provide users and enterprises with various capabilities to store and process their data in third-party data centers. It relies on sharing of resources to achieve coherence and economies of scale, similar to a utility (like the electricity grid) over a network. At the foundation of cloud computing is the broader concept of converged infrastructure and shared services.\cite{CloudComputing}
+} emerged in order to offer services like mail exchange and search engines.  In the last decade,  the exponential increment of connections, connected devices and people led to the need of services for collaborative work and of data synchronization between more devices, introducing new challenges.
 
-Source: Cloud Computing on Wikipedia\cite{CloudComputing}
+Today cloud computing technologies are driving the evolution of \textit{Information Technology} (IT) on several points of views, leading to innovative ways of managing software development and deployments processes, but also of the application architectures their own.
 
-\textit{Infrastructure as a Service} (IaaS) for raw compute, network, storage and other low-level needs
-\textit{Platform as a Service} (PaaS) for running applications by software developers
-\textit{Software as a Service} (SaaS) for provide applications to end users
-  
-Anyway, even if cloud resoles a necessity sometimes there is the need of
-avoid \textit{outsourcing}, or using directly cloud technologies for
-providing services to customers.
+Since usually the evolution proceeds in gradual steps, most of current solutions are generally too bounded to past paradigms, and doesn't fit current necessities in an clear and elegant way, making the management an over-complex task and reducing the scaling potential of applications.  Other solutions are proprietary, so they are not publicly available and doesn't contribute, at least directly, to global progress.
 
-From users perspective, cloud is knows mainly as Software as a Service (SaaS), that consist of use social networks, email, photo sharing, etc. but there are also other cloud services intended for use from software engineers such as Platform as a Service (PaaS) and Infrastructure as a Service (IaaS).
+In early 2013, with the announce of Docker\footnote{https://www.docker.com/docker-engine}, cloud computing saw a big step forward thanks to containers as the atomic unit of cloud platforms.  In June 2014, Google, with around 10 years of experience in managing containers in production, embraced Docker as emerging industrial standard, releasing Kubernetes\footnote{http://kubernetes.io/}, a container orchestration as core tool for managing whole applications at scale.
 
-For example, load in real world is not constant but vary a lot depend on clock, day of week, holidays, special events, so it's crucial be prepared to high heavy load, but without waste resources. This requires a capability to add or remove resources dynamically accordingly of actual (or expected) load. The requirements of cloud solutions regards scalability with increasing the connected devices, flexibility, velocity in delivering new features, scalability in building and deploying applications. So several concepts need to be rethought in order to accomplish the requirements.
+This work proposes a radical step forward, reusing the growing ecosystem of free software built around containers, for providing a platform\footnote{\textit{Platform as a Service} (PaaS) in cloud computing is the middle layer provides an environment for running applications by software developers} on top of an existing cloud infrastructure\footnote{\textit{Infrastructure as a Service} (IaaS) consists in the lower abstraction level of cloud, and provides raw compute, network and storage}, with the goal of provide a suitable environment for running applications\footnote{\textit{Software as a Service} (SaaS) is the level for providing applications to end users} in a modern and scalable way.  This solution aims to provide a lightweight approach for a small and modern company, using Docker and Kubernetes, including projects like CoreOS\footnote{https://coreos.com/} by the namesake company, RedHat's OpenShift\footnote{http://www.openshift.org/} and HashiCorp's Terraform\footnote{https://terraform.io/}, but also InfluxDB\footnote{https://influxdb.com/}, Heka\footnote{http://hekad.readthedocs.org/} and Grafana\footnote{http://grafana.org/} as monitoring stack, and other minor projects.
 
-} emerged for offering services like mail exchange and search engines.  In last decade,  the exponential increment of connections, connected devices and people led to the need of services for collaborative work and of data synchronization between more devices, introducing new challenges.
-
-Today cloud computing technologies are driving the evolution of IT\footnote{Information Technology} on several points of views, leading to modern ways of managing software development and deployments processes, but also of the application architectures their own.
-
-Since usually the evolution proceeds in gradual steps, most of current solutions are generally too bounded to past paradigms, and doesn't fix current necessities in an clear and elegant way, making the management an over-complex task, and reducing the scaling potential of applications.  Other solutions are proprietary, so they are not publicly available and doesn't contribute, at least directly, to innovation and progress.
-
-Recently cloud computing saw a big step forward thanks to containers as the atomic unit of cloud platforms.  In addition, Google embraced this emerging industrial container standard, adding its around 10 years of experience in managing container in production, providing a container orchestration as core tool for managing whole applications at scale.
-
-This work proposes a radical step forward, reusing the growing ecosystem of free software built around containers, for providing a platform (in the PaaS way) on top of an existing cloud infrastructure, with the goal of provide a suitable environment for running applications in a modern and scalable way.  In particular the proposed platform aims to cover the management of platform itself, as a lightweight approach for a small company.  The examined and studied solution mainly includes projects like Docker\footnote{https://www.docker.com/docker-engine} and CoreOS\footnote{https://coreos.com/} by the namesake companies, Kubernetes\footnote{http://kubernetes.io/} developed by Google's Engineers, RedHat's OpenShift\footnote{http://www.openshift.org/} and HashiCorp's Terraform\footnote{https://terraform.io/}, but also InfluxDB\footnote{https://influxdb.com/}, Heka\footnote{http://hekad.readthedocs.org/} and Grafana\footnote{http://grafana.org/} as monitoring stack, and other minor projects.
-
-In addition, will be  containerized a legacy application, \textit{Gasista Felice}, and ran it on top of that platform providing scalability analysis and some benchmarks.
+In addition \textit{Gasista Felice}\footnote{https://befair.github.io/gasistafelice/}, a legacy application, has been containerized for running on top of that platform, providing scalability analysis and some benchmarks.
 
 This project proved that a clear and modern solution could be used for deploying common applications in a small environment, providing all the necessary for management, scaling and guaranteeing the governance through monitoring.  Finally, the project has been developed as multiple sub-projects publicly released as free software on the GitHub\footnote{https://github.com/} portal.
 
@@ -38,7 +23,7 @@ Chapter 2 introduces the working environment in which this thesis was born and t
 
 Chapter 3 introduces some container core concepts, then exemplified their application in a specific use case.
 
-Chapter 4 describes how to bootstrap a IaaS/PaaS in order to provide a production environment.
+Chapter 4 describes how to bootstrap an IaaS/PaaS in order to provide a production environment.
 
 Chapter 5 describes the stack of PaaS showing how applications could take advantage of it.
 
