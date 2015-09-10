@@ -1,16 +1,13 @@
 \chapter{Conclusions}\label{conclusions}
 
-\section{Summary}\label{summary}
-
 Containers and emerging ecosystem around them are questioning the whole
 IT industry about the role of the OS today. There are several new
-opportunity for radically enhance the development and operations
+opportunities for radically enhance the development and deployment
 workflow, software architecture and application environments.
 
-Docker is a new and pretty immature runtime, but the promises around it
-there are. Kubernetes on the other side, as scheduling and orchestration
-framework, has been adopted from other PaaS beyond OpenShift, like Deis,
-and from lower-level components, like Mesos.
+Docker is a new and quite immature runtime, but the future seems very prosperous. Kubernetes on the other side, has been adopted as scheduling and orchestration
+framework by other PaaS beyond OpenShift, like Deis,
+and from lower-level components, like Mesos\footnote{https://mesos.apache.org/}.
 
 \section{Future Developments}\label{future-developments}
 
@@ -18,24 +15,23 @@ At this point, there are a large variety of potential improvements, mainly about
 
 Applications running on top of the platform that use traditional
 relational database such as PostgreSQL, could be configured for high
-availability also for data
-(https://www.compose.io/articles/high-availability-for-postgresql-batteries-not-included/).
+availability also for data\footnote{https://www.compose.io/articles/high-availability-for-postgresql-batteries-not-included/}.
 
-From the monitoring and logging point of view, it could be enabled an
-alerting system directly via Heka alert encoder plug-in, or via a
-dedicated software like \textit{Sentry} or \textit{Bosun}.
+From the monitoring and logging point of view, an
+alert system could be feasible by an Heka alert encoder plug-in, or via a
+dedicated software like Sentry\footnote{https://getsentry.com/} or Bosun\footnote{https://bosun.org/}.
 
 From the cluster perspective, there is the possibility of rolling update
-or auto-scaling of the cluster itself. In fact with passing the time,
-the stack should be updated, and the applications deployed on cluster
+or auto-scaling of the cluster itself. In fact over time,
+the stack components should be updated, and the applications deployed on cluster
 could need globally more resources. A way to do this is monitoring the
 global load of the cluster, and instruct Terraform for varying the number
 of nodes accordingly to it.
 
 Beyond the single cluster, there is an emerging proposal for
-\textit{cluster federation}, called Ubernetes, that enables
+\textit{cluster federation}, called Ubernetes\footnote{http://kubernetes.io/v1.0/docs/proposals/federation.html}, that enables
 high-availability with geographically distributed Kubernetes clusters.
 
-With that global distributed infrastructure, it's possible build
-geographically distributed applications built on top of databases like
-Consul for key-value storage or CockroachDB for more complex cases.
+With that global distributed infrastructure, it's possible to build
+geographically distributed applications on top of databases like
+Consul\footnote{https://consul.io/} for key-value storage or CockroachDB\footnote{http://www.cockroachlabs.com/} for more complex cases.

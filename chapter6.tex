@@ -12,17 +12,17 @@ encryption/authentication) of various components between hosts. Luckily,
 in this situation it's possible take advantage of the cluster primitives
 to make it an easier (and efficient) task.
 
-While \emph{InfluxDB} and \emph{Grafana} are a popular choice
+While \textit{InfluxDB} and \textit{Grafana} are a popular choice
 respectively for storage and visualize resource metrics, in logging
-world the most popular one is the \emph{ELK} stack, where ELK stands for
-\emph{ElasticSearch} (storage), \emph{Logstash} (log processing) and
-\emph{Kibana} (visualization). Since a guideline is the lightweight,
+world the most popular one is the \textit{ELK} stack, where ELK stands for
+ElasticSearch\footnote{https://www.elastic.co/products/elasticsearch} (storage), Logstash\footnote{https://www.elastic.co/products/logstash} (log processing) and
+Kibana\footnote{https://www.elastic.co/products/kibana} (visualization). Since a guideline is the lightweight,
 instead of using an additional stack for logging, it has been reused
-both InfluxDB and Grafana, adding \emph{Heka} for logs processing, so
-the stack could be called \emph{IHG}: InfluxDB, Heka and Grafana.
+both InfluxDB and Grafana, adding \textit{Heka} for logs processing, so
+the stack could be called \textit{IHG}: InfluxDB, Heka and Grafana.
 
-In addition, Kubernetes' kubelet comes with built-in \emph{cAdvisor} for
-resource monitoring, while \emph{Heapster} is the main plug-in for
+In addition, Kubernetes' kubelet comes with built-in cAdvisor\footnote{https://github.com/google/cadvisor} for
+resource monitoring, while Heapster\footnote{https://github.com/kubernetes/heapster} is the main plug-in for
 resource cluster manager. At the end, Logspout (built-in in recent
 versions of Heka) will be used for gathering logs from all running
 containers.
@@ -42,125 +42,98 @@ The monitoring stack is deployed as an unique application, and includes
 InfluxDB is a distributed time-series database that fits well since it
 doesn't need a predefined schema for data, it's horizontally scalable
 in the NoSQL way, support native data replication and include a familiar
-SQL-like language, \emph{InfluxQL}.
+SQL-like language, InfluxQL\footnote{https://influxdb.com/docs/v0.8/api/query\_language.html}.
 
-InfluxQL is the query language. Here some examples:
-
-\begin{verbatim}
-select * from mem_usage
-
-select * from log_lines where line =~ /error/i
-
-select mean(cpu_load) group by time(30m) where time > now() - 1d and host = 'server E'
-\end{verbatim}
-
-Resource:
+A single metric of a resource could be stored as (in YAML format):
 
 \begin{verbatim}
-[{
-  "name": "load_avg",
-  "columns": [
-    "time",
-    "app",
-    "value"
-  ],
-  "points": [[
-    1400425342091,
-    "Frontend B",
-    0.8
-  ]]
-}]
+- 
+  name: load_avg
+  columns: [ time, app, value ]
+  points: [[ 1400425342091, pod_name, 0.8 ]]
 \end{verbatim}
 
-Log:
+Instead a line of log could be stored as:
 
 \begin{verbatim}
-[{
-  "name": "log_lines",
-  "columns": [
-    "time",
-    "app",
-    "line"
-  ],
-  "points": [[
-    1400425947368,
-    "Frontend B",
-    "some useful log info"
-  ]]
-}]
+-
+  name: log_lines
+  columns: [ time, app, line ]
+  points: [[ 1400425947368, pod_name, "some useful log info" ]]
 \end{verbatim}
+
+This is only a very basic example, of course additional columns could increase the usefulness of archived data.
 
 In OpenShift, InfluxDB runs as component of monitoring application, and
 is composed by a \texttt{replicationController} and a \texttt{service}:
 
 \section{Resource Gathering}\label{resource-gathering}
 
-Kubernetes comes with built-in cAdvisor (https://github.com/google/cadvisor) in Kubelet, for resource metrics gathering, such as CPU, RAM, I/O, network, etc.
+Kubernetes comes with built-in cAdvisor in Kubelet, for resource metrics gathering, such as CPU, RAM, I/O, network, etc.
 
-Heapster (https://github.com/kubernetes/heapster) is the Kubernetes cluster monitoring system, that gather metrics from nodes and send them to InfluxDB.
+Heapster is the Kubernetes cluster monitoring system, that gather metrics from nodes and send them to InfluxDB.
 
 The exported metrics are:
 \begin{itemize}
 
 \item
-  uptime: Number of milliseconds since the container was started
+  uptime: Number of milliseconds since the container was started;
 \item
-  cpu/usage: Cumulative CPU usage on all cores
+  cpu/usage: Cumulative CPU usage on all cores;
 \item
-  cpu/limit: CPU limit in millicores
+  cpu/limit: CPU limit in millicores;
 \item
-  memory/usage: Total memory usage
+  memory/usage: Total memory usage;
 \item
   memory/working\_set: Total working set usage. Working set is the
-  memory being used and not easily dropped by the kernel
+  memory being used and not easily dropped by the kernel;
 \item
-  memory/limit: Memory limit
+  memory/limit: Memory limit;
 \item
-  memory/page\_faults: Number of page faults
+  memory/page\_faults: Number of page faults;
 \item
-  memory/major\_page\_faults: Number of major page faults
+  memory/major\_page\_faults: Number of major page faults;
 \item
-  network/rx: Cumulative number of bytes received over the network
+  network/rx: Cumulative number of bytes received over the network;
 \item
   network/rx\_errors: Cumulative number of errors while receiving over
-  the network
+  the network;
 \item
-  network/tx: Cumulative number of bytes sent over the network
+  network/tx: Cumulative number of bytes sent over the network;
 \item
   network/tx\_errors: Cumulative number of errors while sending over the
-  network
+  network;
 \item
-  filesystem/usage: Total number of bytes consumed on a filesystem
+  filesystem/usage: Total number of bytes consumed on a filesystem;
 \item
-  filesystem/limit: The total size of filesystem in bytes
+  filesystem/limit: The total size of filesystem in bytes.
 \end{itemize}
 
 While the exported labels are:
 
 \begin{itemize}
 \item
-  hostname: Hostname where the container ran
+  hostname: Hostname where the container ran;
 \item
-  host\_id: Identifier specific to a host. Set by cloud provider or user
+  host\_id: Identifier specific to a host. Set by cloud provider or user;
 \item
   container\_name: User-provided name of the container or full container
-  name for system containers
+  name for system containers;
 \item
-  pod\_name: The name of the pod
+  pod\_name: The name of the pod;
 \item
-  pod\_id: The unique ID of the pod
+  pod\_id: The unique ID of the pod;
 \item
-  pod\_namespace: The namespace of the pod
+  pod\_namespace: The namespace of the pod;
 \item
-  namespace\_id: The UID of namespace of the pod
+  namespace\_id: The UID of namespace of the pod;
 \item
-  labels: Comma-separated list of user-provided labels
+  labels: Comma-separated list of user-provided labels;
 \item
-  resource\_id: Identifier(s) specific to a metric
+  resource\_id: Identifier(s) specific to a metric.
 \end{itemize}
 
-Heapster is deployed as \texttt{replicationController}, a
-\texttt{service} and a \texttt{route}.
+Heapster is deployed as \texttt{replicationController}, a \texttt{service} and a \texttt{route}.
 
 \section{Log Processing}\label{log-processing}
 
@@ -174,11 +147,11 @@ Heka permits to logs parsing, filtering, structuring them and send to InfluxDB. 
 \caption{The Heka Data Flow}
 \end{figure}
 
-The input part is composed by the \emph{Docker Log Input}, build on top of \emph{Logspout} that acquires stdout/stderr of running containers from the Docker Engine Unix socket, and \emph{NGiNX access} and \emph{error decoders}.
+The input part is composed by the \textit{Docker Log Input}, build on top of \textit{Logspout} that acquires stdout/stderr of running containers from the Docker Engine Unix socket, and \textit{NGiNX access} and \textit{error decoders}.
 
-Filtering consist of \emph{HTTP Status Graph} that filter NGiNX access logs and generate an HTTP response code based graph.
+Filtering consist of \textit{HTTP Status Graph} that filter NGiNX access logs and generate an HTTP response code based graph.
 
-The output part is composed by encoding in \emph{InfluxDB schema} and sending data to \emph{InfluxDB HTTP APIs}.
+The output part is composed by encoding in \textit{InfluxDB schema} and sending data to \textit{InfluxDB HTTP APIs}.
 
 Heka is deployed on top of OpenShift as a simple \texttt{replicationController}.
 
@@ -203,10 +176,12 @@ select count(status) from "nginx.access" where status < 400
 select count(status) from "nginx.access" where status >= 400
 
 # Show the CPU load of backend
-select derivative(value) from "cpu/usage_ns_cumulative" where container_name="back"
+select derivative(value) from "cpu/usage_ns_cumulative" \
+    where container_name="back"
 
 # Show the memory usage of backend
-select value from "memory/usage_bytes_gauge" where container_name="back"
+select value from "memory/usage_bytes_gauge" \
+    where container_name="back"
 \end{verbatim}
 
 \begin{figure}[htbp]

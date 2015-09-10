@@ -210,12 +210,14 @@ ENV LC_ALL                  it_IT.UTF-8
 ENV LANG                    it_IT.UTF-8
 ENV LANGUAGE                it_IT.UTF-8
 
-ENV PYTHONPATH              /code:/code/gasistafelice:/usr/local/lib/python2.7/site-packages
+ENV PYTHONPATH
+    /code:/code/gasistafelice:/usr/local/lib/python2.7/site-packages
 ENV UWSGI_CHDIR             /code/gasistafelice
 ENV UWSGI_WSGI_FILE         /code/gasistafelice/gf/wsgi.py
 ENV DJANGO_SETTINGS_MODULE  gf.settings
 ENV UWSGI_STATIC_MAP        /static=/code/gasistafelice/static
-ENV UWSGI_STATIC_SAFE       /usr/local/lib/python2.7/site-packages/django/contrib/admin/static/admin
+ENV UWSGI_STATIC_SAFE
+    /usr/local/lib/python2.7/site-packages/django/contrib/admin/static/admin
 
 COPY deps/debian /code/gasistafelice/deps/debian
 RUN apt update && \
@@ -297,7 +299,8 @@ kind: Template
 metadata:
   name: gasistafelice
   annotations:
-    description: Gasista Felice is the platform for DES Macerata project
+    description: >
+      Gasista Felice is the platform for DES Macerata project
     tags: app,gas,des
 labels:
   app: gf
@@ -552,9 +555,13 @@ OS_COMMIT := 96963b6
 
 BINPATH := ${GOPATH}/bin
 export PATH := ${GOPATH}/bin:${PATH}
-TF_URL := https://dl.bintray.com/mitchellh/terraform/terraform_${TF_V}_linux_amd64.zip
-OS_URL := https://github.com/openshift/origin/releases/download/v${OS_V}/openshift-origin-v${OS_V}-${OS_COMMIT}-linux-amd64.tar.gz
-NETENV_URL := https://github.com/kelseyhightower/setup-network-environment/releases/download/v${NETENV_V}/setup-network-environment
+TF_URL := https://dl.bintray.com/mitchellh/terraform/\
+    terraform_${TF_V}_linux_amd64.zip
+OS_URL := https://github.com/openshift/origin/releases/download/\
+    v${OS_V}/openshift-origin-v${OS_V}-${OS_COMMIT}-linux-amd64.tar.gz
+NETENV_URL := https://github.com/kelseyhightower/\
+    setup-network-environment/releases/download/\
+    v${NETENV_V}/setup-network-environment
 
 
 help:
@@ -566,14 +573,17 @@ install:
         @go get -u github.com/rakyll/boom
         @go install github.com/dbohdan/remarshal
         @go install github.com/rakyll/boom
-        @curl -L -o .cache/setup-network-environment -z .cache/setup-network-environment ${NETENV_URL}
-        @curl -L -o .cache/terraform.zip             -z .cache/terraform.zip             ${TF_URL}
-        @curl -L -o .cache/openshift-origin.tar.gz   -z .cache/openshift-origin.tar.gz   ${OS_URL}
+        @curl -L -o .cache/setup-network-environment \
+            -z .cache/setup-network-environment ${NETENV_URL}
+        @curl -L -o .cache/terraform.zip \
+            -z .cache/terraform.zip             ${TF_URL}
+        @curl -L -o .cache/openshift-origin.tar.gz \
+            -z .cache/openshift-origin.tar.gz   ${OS_URL}
         @unzip -o   .cache/terraform.zip             -d ${BINPATH}/
         @tar -xf    .cache/openshift-origin.tar.gz   -C .cache/
-        @ln -sf     .cache/openshift                    ${BINPATH}/openshift
-        @ln -sf     ${BINPATH}/openshift                ${BINPATH}/oc
-        @ln -sf     ${BINPATH}/openshift                ${BINPATH}/oadm
+        @ln -sf     .cache/openshift ${BINPATH}/openshift
+        @ln -sf     ${BINPATH}/openshift ${BINPATH}/oc
+        @ln -sf     ${BINPATH}/openshift ${BINPATH}/oadm
 
 clean soft-clean:
         @rm -rf \
@@ -620,10 +630,10 @@ Ocean}\label{terraform-template-for-digital-ocean}
 
 \begin{verbatim}
 variable:
-  BASE_DOMAIN:    { default: befaircloud.me }
-  NODES:          { default: 2 }
-  OMASTER:        { default: /opt/bin/openshift.local.config/master }
-  ONODE:          { default: /opt/bin/openshift.local.config/node }
+  BASE_DOMAIN: { default: befaircloud.me }
+  NODES: { default: 2 }
+  OMASTER: { default: /opt/bin/openshift.local.config/master }
+  ONODE: { default: /opt/bin/openshift.local.config/node }
   # Provider specific
   DO_TOKEN:       {}
   DO_SSH_ID:      { default: core }
@@ -653,7 +663,8 @@ resource:
         HOME: /home/core
         OMASTER: ${var.OMASTER}
         ONODE: ${var.ONODE}
-        MASTER_IP: ${digitalocean_droplet.master.ipv4_address_private}
+        MASTER_IP: >
+          ${digitalocean_droplet.master.ipv4_address_private}
         SSH_PUBLIC_KEY: ${file(".cache/id.pub")}
       depends_on:
       - digitalocean_droplet.master
@@ -686,7 +697,8 @@ resource:
           inline:
           - sudo mkdir -p /opt/bin/
           - tar -xf /home/core/pkg.tar.gz -C /home/core
-          - sudo mv /home/core/.cache/setup-network-environment /opt/bin/
+          - sudo mv /home/core/.cache/setup-network-environment \
+              /opt/bin/
           - sudo mv /home/core/.cache/openshift /opt/bin/
           - mv /home/core/openshift/* /home/core/
           - rm -rf /home/core/{pkg.tar.gz,.cache,openshift}
@@ -716,7 +728,8 @@ resource:
           inline:
           - sudo mkdir -p /opt/bin/
           - tar -xf /home/core/pkg.tar.gz -C /home/core
-          - sudo mv /home/core/.cache/setup-network-environment /opt/bin/
+          - sudo mv /home/core/.cache/setup-network-environment \
+              /opt/bin/
           - sudo mv /home/core/.cache/openshift /opt/bin/
           - rm -rf /home/core/{pkg.tar.gz,.cache,openshift}
 
@@ -737,14 +750,14 @@ resource:
 output:
   step1:
     value: |
-      scp -r -i .cache/id -o StrictHostKeyChecking=no core@${digitalocean_droplet.master.ipv4_address}:./master .cache/; \
-      scp -r -i .cache/id -o StrictHostKeyChecking=no .cache/master core@${digitalocean_droplet.nodes.0.ipv4_address}:./; \
-      scp -r -i .cache/id -o StrictHostKeyChecking=no .cache/master core@${digitalocean_droplet.nodes.1.ipv4_address}:./
+      scp -r core@${digitalocean_droplet.master.ipv4_address}:./master .cache/; \
+      scp -r .cache/master core@${digitalocean_droplet.nodes.0.ipv4_address}:./; \
+      scp -r .cache/master core@${digitalocean_droplet.nodes.1.ipv4_address}:./
   step2:
     value: |
-      log to master -- ssh -i .cache/id -o StrictHostKeyChecking=no core@${digitalocean_droplet.master.ipv4_address}
-      log to node-0 -- ssh -i .cache/id -o StrictHostKeyChecking=no core@${digitalocean_droplet.nodes.0.ipv4_address}
-      log to node-1 -- ssh -i .cache/id -o StrictHostKeyChecking=no core@${digitalocean_droplet.nodes.1.ipv4_address}
+      log to master -- ssh core@${digitalocean_droplet.master.ipv4_address}
+      log to node-0 -- ssh core@${digitalocean_droplet.nodes.0.ipv4_address}
+      log to node-1 -- ssh core@${digitalocean_droplet.nodes.1.ipv4_address}
       dashboard -- https://${digitalocean_droplet.master.ipv4_address}:8443
       entrypoint -- http://${var.BASE_DOMAIN}
 \end{verbatim}
@@ -784,16 +797,21 @@ coreos:
 
       [Service]
       # Setup network environment
-      ExecStartPre=/opt/bin/wufae /opt/bin/setup-network-environment
-      ExecStartPre=/usr/bin/chown root:root /opt/bin/setup-network-environment
-      ExecStartPre=/usr/bin/chmod +x /opt/bin/setup-network-environment
+      ExecStartPre=/opt/bin/wufae \
+          /opt/bin/setup-network-environment
+      ExecStartPre=/usr/bin/chown root:root \
+          /opt/bin/setup-network-environment
+      ExecStartPre=/usr/bin/chmod +x \
+          /opt/bin/setup-network-environment
       ExecStartPre=/opt/bin/setup-network-environment
       # Generate OpenShift master configurations
       ExecStartPre=/opt/bin/wufae /opt/bin/openshift
       ExecStartPre=/usr/bin/chown root:root /opt/bin/openshift
       ExecStartPre=/usr/bin/chmod +x /opt/bin/openshift
-      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift /opt/bin/oadm
-      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift /opt/bin/oc
+      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift \
+          /opt/bin/oadm
+      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift \
+          /opt/bin/oc
       ExecStart=/opt/bin/openshift start master \
       --write-config=${OMASTER}/ \
       --listen=https://0.0.0.0:8443 \
@@ -804,7 +822,8 @@ coreos:
       --network-cidr='10.1.0.0/16'
       # Copy files for nodes
       ExecStartPost=/usr/bin/chmod +r ${OMASTER}/admin.kubeconfig
-      ExecStartPost=/usr/bin/chmod +r ${OMASTER}/openshift-registry.kubeconfig
+      ExecStartPost=/usr/bin/chmod +r \
+          ${OMASTER}/openshift-registry.kubeconfig
       ExecStartPost=/usr/bin/sleep 5
       ExecStartPost=/usr/bin/cp -R ${OMASTER} ${HOME}/
       ExecStartPost=/usr/bin/chown -R core:core ${HOME}/master/
@@ -819,7 +838,8 @@ coreos:
         [Unit]
         Requires=etcd2.service
         [Service]
-        ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan"}}'
+        ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config \
+            '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan"}}'
   -
     name: docker.service
     command: start
@@ -912,9 +932,12 @@ coreos:
 
       [Service]
       # Setup network environment
-      ExecStartPre=/opt/bin/wufae /opt/bin/setup-network-environment
-      ExecStartPre=/usr/bin/chown root:root /opt/bin/setup-network-environment
-      ExecStartPre=/usr/bin/chmod +x /opt/bin/setup-network-environment
+      ExecStartPre=/opt/bin/wufae \
+          /opt/bin/setup-network-environment
+      ExecStartPre=/usr/bin/chown root:root \
+          /opt/bin/setup-network-environment
+      ExecStartPre=/usr/bin/chmod +x \
+          /opt/bin/setup-network-environment
       ExecStart=/opt/bin/setup-network-environment
       # Generate OpenShift node configurations
       WorkingDirectory=/opt/bin
@@ -922,8 +945,10 @@ coreos:
       ExecStartPre=/opt/bin/wufae /opt/bin/openshift
       ExecStartPre=/usr/bin/chown root:root /opt/bin/openshift
       ExecStartPre=/usr/bin/chmod +x /opt/bin/openshift
-      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift /opt/bin/oadm
-      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift /opt/bin/oc
+      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift \
+          /opt/bin/oadm
+      ExecStartPre=/usr/bin/ln -sf /opt/bin/openshift \
+          /opt/bin/oc
       # wait for master config
       ExecStartPre=/opt/bin/wufae ${HOME}/master/master-config.yaml
       ExecStartPre=/usr/bin/cp -R ${HOME}/master/ ${OMASTER}/
@@ -950,7 +975,8 @@ coreos:
         [Unit]
         Requires=etcd2.service
         [Service]
-        ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan"}}'
+        ExecStartPre=/usr/bin/etcdctl set /coreos.com/network/config \
+        '{"Network":"10.244.0.0/16", "Backend": {"Type": "vxlan"}}'
   -
     name: docker.service
     command: start
@@ -1137,7 +1163,9 @@ objects:
           image: kubernetes/heapster:v0.17.0
           args:
           - -port=8082
-          - -source=kubernetes:https://openshift.default.svc.cluster.local?auth=&insecure=true&useServiceAccount=true
+          - -source=kubernetes:\
+            https://openshift.default.svc.cluster.local?\
+            auth=&insecure=true&useServiceAccount=true
           - -sink=influxdb:http://influxdb.default.svc.cluster.local
           - -logtostderr=true
           ports:
@@ -1291,7 +1319,9 @@ objects:
   [NginxAccess.config]
     type = 'nginx.access'
     user_agent_transform = true
-    log_format = "$remote_addr - $remote_user [$msec] \"$request\" $status $body_bytes_sent \"$http_referer\" \"$http_user_agent\" \"$http_x_forwarded_for\""
+    log_format = "$remote_addr - $remote_user [$msec] \
+      \"$request\"  $status $body_bytes_sent \"$http_referer\" \
+      \"$http_user_agent\" \"$http_x_forwarded_for\""
 
 [NginxError]
   type = 'SandboxDecoder'

@@ -13,29 +13,29 @@ environment, and how applications could take advantage on it.
 
 In the container world, the operating system role should only be concerned in providing a minimal base for running containers.  In fact, since all the application dependencies are demanded to containers, there is only need of basic functionality, without a package manager and other features of a traditional OS.
 
-The first and currently the most popular project that take into that direction has been \textit{CoreOS}, announced in summer 2013 as a Gentoo-based GNU/Linux distribution for deploying containers in a clustered environment. CoreOS occupies few memory and comes with \textit{SystemD}, \textit{Docker} and additional tools for distributed cluster environments like \textit{Etcd}.
+The first and currently the most popular project that take into that direction has been \textit{CoreOS}, announced in summer 2013 as a Gentoo-based GNU/Linux distribution for deploying containers in a clustered environment. CoreOS occupies few memory and comes with SystemD\footnote{https://wiki.freedesktop.org/www/Software/systemd/}, Docker and additional tools for distributed cluster environments like Etcd\footnote{https://coreos.com/etcd/}.
 
-\textit{SystemD} is the de-facto standard in GNU/Linux distribution as init daemon. SystemD made really easy to demonize processes and has advanced features such as parallelization and socket activation.  For example, the SSH daemon is stopped by default in order to save memory, and it will be started only after an incoming request on 22 TCP socket.  SystemD is used for running directly the OpenShift/Kubernetes binaries, outside containers, and the other core tools.
+SystemD is the de-facto standard in GNU/Linux distribution as init daemon. SystemD made really easy to demonize processes and has advanced features such as parallelization and socket activation.  For example, the SSH daemon is stopped by default in order to save memory, and it will be started only after an incoming request on 22 TCP socket.  SystemD is used for running directly the OpenShift/Kubernetes binaries, outside containers, and the other core tools.
 
-\textit{Etcd} is a key-value store which represent the database of the cluster since it has been used for inter-host communication by all components.  It could be used as a single master as in this project, or in high availability and distributed mode, useful for multi-master cluster configuration.
+Etcd is a key-value store which represent the database of the cluster since it has been used for inter-host communication by all components.  It could be used as a single master as in this project, or in high availability and distributed mode, useful for multi-master cluster configuration.
 
-\textit{Fleet} provides a distributed init system, extending SystemD functionality from host-level to cluster-level.  Fleet has not been used in this case, but represent an alternative to Cloud Config in settings up the SystemD units.  In fact, it permits to bootstrap the OpenShift/Kubernetes stack from the master to all nodes.
+Fleet\footnote{https://coreos.com/fleet/docs/latest/} provides a distributed init system, extending SystemD functionality from host-level to cluster-level.  Fleet has not been used in this case, but represent an alternative to Cloud Config in settings up the SystemD units.  In fact, it permits to bootstrap the OpenShift/Kubernetes stack from the master to all nodes.
 
-\textit{Flannel} has been development as a requisites of the Kubernetes networking model, providing a subnet mask to every host in order to enable an overlay network for container inter-host communication.  At boot time, Flannet set the network data into Etcd under \texttt{/coreos.io} key.
+Flannel\footnote{https://coreos.com/flannel/docs/} has been development as a requisites of the Kubernetes networking model, providing a subnet mask to every host in order to enable an overlay network for container inter-host communication.  At boot time, Flannet set the network data into Etcd under \texttt{/coreos.io} key.
 
 CoreOS releases are organized in 3 channels: alpha, beta and stable. Alpha is generally release once a week and includes new software, while stable it's more suitable for production.
 
-Most popular alternatives to CoreOS are Rancher OS (http://rancher.com/rancher-os/), Atomic (http://www.projectatomic.io/) by Red Hat and Ubuntu Snappy (http://www.ubuntu.com/cloud/tools/snappy) by Canonical.
+Most popular alternatives to CoreOS are Rancher OS\footnote{http://rancher.com/rancher-os/}, Atomic\footnote{http://www.projectatomic.io/} by Red Hat and Ubuntu Snappy\footnote{http://www.ubuntu.com/cloud/tools/snappy} by Canonical.
 
 \section{Microservices Scaling and Orchestration}\label{microservices-scaling-and-orchestration}
 
-Kubernetes (http://kubernetes.io/) has been announced at Google I/O in June 2014, it's a cluster management system, a framework for container scheduling and orchestration in a clustered environment. Kubernetes has been developed by the same engineers who developed the current Google infrastructure, and takes advantage of that experience.  While CoreOS provides the basic for running containers, Kubernetes enables an higher level through the container scheduling and orchestration across all the cluster.
+Kubernetes has been announced at Google I/O in June 2014, it's a cluster management system, a framework for container scheduling and orchestration in a clustered environment. Kubernetes has been developed by the same engineers who developed the current Google infrastructure, and takes advantage of that experience.  While CoreOS provides the basic for running containers, Kubernetes enables an higher level through the container scheduling and orchestration across all the cluster.
 
 From the experience at Google, Kubernetes introduces some additional concepts on top of containers:
 \begin{itemize}
-\item \textit{pod}, a set of one or more containers that run together on a node, represents a single logic unit
-\item \textit{replicationController} is concerned about guarantee the correct numbers of replicas of a pod
-\item \textit{service} groups pods and provides a common DNS name and a load-balanced IP address to access them
+\item \textit{pod}, a set of one or more containers that run together on a node, represents a single logic unit;
+\item \textit{replicationController} is concerned about guarantee the correct numbers of replicas of a pod;
+\item \textit{service} groups pods and provides a common DNS name and a load-balanced IP address to access them.
 \end{itemize}
 
 While containers could seen as "atoms", pods could be considered "molecules".  Replication controllers and services are both concepts built around pods.
@@ -46,7 +46,7 @@ While containers could seen as "atoms", pods could be considered "molecules".  R
 \caption{Pods and Replication Controllers}
 \end{figure}
 
-A basic example of pod composed by 2 containers could be an application server and a Redis instance for caching from database.
+A basic example of pod composed by 2 containers could be an application server and a Redis\footnote{http://redis.io/} instance for caching from database.
 
 In Gasista Felice every component is composed by a pod, a replicationController and a service for providing access to it.  Since there are 4 components, a minimal instance of the application includes 4 service, 4 replication controller and 4 pods.  The number of the pods could be changed dynamically.
 
@@ -55,16 +55,16 @@ Kubernetes stores the data about pods, replication controllers and services into
 In order to add these features, Kubernetes build on top of Docker, Etcd and Flannel, adding 3 master components:
 
 \begin{itemize}
-\item \textit{API Server} validates and configures the data for pods, services, and replication controllers
-\item \textit{Controller Manager} watches Etcd for changes to replication controller and then uses the API to enforce the desired state
-\item \textit{Scheduler} schedule the pods into nodes depends on resources availability or other parameters
+\item \textit{API Server} validates and configures the data for pods, services, and replication controllers;
+\item \textit{Controller Manager} watches Etcd for changes to replication controller and then uses the API to enforce the desired state;
+\item \textit{Scheduler} schedule the pods into nodes depends on resources availability or other parameters.
 \end{itemize}
 
 And 2 more components in nodes:
 
 \begin{itemize}
-\item \textit{Kubelet} applies changes to the node as specified in local Etcd, and updated the data on Etcd depending on local state of containers
-\item \textit{Proxy} manages the services defined in Etcd on that node
+\item \textit{Kubelet} applies changes to the node as specified in local Etcd, and updated the data on Etcd depending on local state of containers;
+\item \textit{Proxy} manages the services defined in Etcd on that node.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -86,13 +86,13 @@ On July 20, 2015 the \textit{Linux Foundation} announced the \textit{Cloud Nativ
 Even if Kubernetes represents a great solution for scaling services, it lacks the concept of application and
 the development workflow, so it's more a tool for system specialists. In order to reach a PaaS abstraction and deploying real applications, there is needed another level on top of Kubernetes.
 
-The 3rd version of \textit{OpenShift} is a PaaS built on top of Kubernetes and Docker, providing a solution covers continuous delivery for modern containers and microservices world.
+The 3rd version of OpenShift is a PaaS built on top of Kubernetes and Docker, providing a solution covers continuous delivery for modern containers and microservices world.
 
 OpenShift extends Kubernetes APIs with additional concepts:
 
 \begin{itemize}
-\item \textit{route} configure a public DNS to point to a specific service
-\item \textit{template} providing a way to define an application as a set of components (pods, replication controllers, services and routes), in a similar way as happens with Docker Compose
+\item \textit{route} configure a public DNS to point to a specific service;
+\item \textit{template} providing a way to define an application as a set of components (pods, replication controllers, services and routes), in a similar way as happens with Docker Compose.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -104,10 +104,10 @@ OpenShift extends Kubernetes APIs with additional concepts:
 Gasista Felice template is composed by a total of:
 
 \begin{itemize}
-\item 4 pods (variable)
-\item 4 replication controllers
-\item 4 services
-\item 1 route, \textit{gf.befaircloud.me} that points to proxy service
+\item 4 pods (variable);
+\item 4 replication controllers;
+\item 4 services;
+\item 1 route, \textit{gf.befaircloud.me} that points to proxy service.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -131,8 +131,8 @@ A small note derived on experience in deploying Gasista Felice on top of OpenShi
 OpenShift comes with a set of components:
 
 \begin{itemize}
-\item an \textit{HAProxy}-based external router for external reachability
-\item \textit{skydns} server in order to respond to DNS queries for services
+\item an \textit{HAProxy}\footnote{http://www.haproxy.org/}-based external router for external reachability;
+\item \textit{skydns}\footnote{https://github.com/skynetservices/skydns} server in order to respond to DNS queries for services.
 \end{itemize}
 
 All incoming requests come to HAProxy first, than reaches the application web server, like NGINX.
@@ -158,10 +158,10 @@ The test consists in using \textit{boom} for 50 concurrent requests for a total 
 Even if this should be a simple request, instead involves several work and represent a simple but significant test case. The values registered consist in:
 
 \begin{itemize}
-\item number of pods, and related uWSGI worker processes (4 uWSGI workers/pod)
-\item \textit{total time}: interval from the beginning of the first request,   to the end of the last requests
-\item \textit{requests per second}: represent the medium of requests served per second
-\item \textit{medium}: medium of time in responding to a single request
+\item number of pods, and related uWSGI worker processes (4 uWSGI workers/pod);
+\item \textit{total time}: interval from the beginning of the first request,   to the end of the last requests;
+\item \textit{requests per second}: represent the medium of requests served per second;
+\item \textit{medium}: medium of time in responding to a single request.
 \end{itemize}
 
 \begin{longtable}[c]{@{}llll@{}}
