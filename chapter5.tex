@@ -1,7 +1,6 @@
 \chapter{PaaS Management}\label{paas-management}
 
-This chapter describes the stack around a container-based production
-environment, and how applications could take advantage on it.
+This chapter describes the stack around a container-based production environment, and how applications could take advantage on it.  Figure 5.1 shows an overview of the whole clustered PaaS.
 
 \begin{figure}[htbp]
 \centering
@@ -38,7 +37,7 @@ From the experience at Google, Kubernetes introduces some additional concepts on
 \item \textit{service} groups pods and provides a common DNS name and a load-balanced IP address to access them.
 \end{itemize}
 
-While containers could seen as "atoms", pods could be considered "molecules".  Replication controllers and services are both concepts built around pods.
+While containers could seen as \textit{atoms}, pods could be considered \textit{molecules}.  Replication controllers and services are both concepts built around pods, as shown in figure 5.2.
 
 \begin{figure}[htbp]
 \centering
@@ -63,8 +62,8 @@ In order to add these features, Kubernetes build on top of Docker, Etcd and Flan
 And 2 more components in nodes:
 
 \begin{itemize}
-\item \textit{Kubelet} applies changes to the node as specified in local Etcd, and updated the data on Etcd depending on local state of containers;
-\item \textit{Proxy} manages the services defined in Etcd on that node.
+\item \textit{Kubelet} applies changes to the node as specified in local Etcd, and updated the data on Etcd depending on local state of containers, as shown in figure 5.3;
+\item \textit{Proxy} manages the services defined in Etcd on that node, as shown in figure 5.4.
 \end{itemize}
 
 \begin{figure}[htbp]
@@ -88,7 +87,7 @@ the development workflow, so it's more a tool for system specialists. In order t
 
 The 3rd version of OpenShift is a PaaS built on top of Kubernetes and Docker, providing a solution covers continuous delivery for modern containers and microservices world.
 
-OpenShift extends Kubernetes APIs with additional concepts:
+As shown in figure 5.5, OpenShift extends Kubernetes APIs with additional concepts:
 
 \begin{itemize}
 \item \textit{route} configure a public DNS to point to a specific service;
@@ -98,10 +97,10 @@ OpenShift extends Kubernetes APIs with additional concepts:
 \begin{figure}[htbp]
 \centering
 \includegraphics{media/ch5-template.png}
-\caption{Route and Template objects}
+\caption{OpenShift adds Route and Template objects to Kubernetes}
 \end{figure}
 
-Gasista Felice template is composed by a total of:
+As shown in figure 5.6, Gasista Felice template is composed by a total of:
 
 \begin{itemize}
 \item 4 pods (variable);
@@ -119,6 +118,8 @@ Gasista Felice template is composed by a total of:
 OpenShift stores the own objects in Etcd under \texttt{/openshift.io} key.
 
 In order to create an instance of Gasista Felice, it needed running with \texttt{openshift/gasistafelice} script from the master.
+
+In Figure 5.7 the OpenShift dashboard shows the main objects like replicationController, pods, services and routes in a clean UI.
 
 \begin{figure}[htbp]
 \centering
@@ -185,4 +186,4 @@ Backend pods/uWSGI workers & total time & reqs/s & medium \tabularnewline
 \bottomrule
 \end{longtable}
 
-The result shows as the time decreasing from 1 to 10 pods. Beyond that number there is no advantage, probably because of cluster resource limit.
+Table 5.1 shows the results as the time decreasing from 1 to 10 pods. Beyond that number there is no advantage, probably because of cluster resource limit.

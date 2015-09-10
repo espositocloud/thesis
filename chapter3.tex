@@ -42,26 +42,25 @@ Some of the advantages in using Docker are:
   reproducible and standardized environments between development,
   staging, QA and production
 \item
-  reduce overhead respect to VMs used for deploy single application
+  reduce overhead respect to VMs used for deploy single application (as shown in figure 3.1)
 \item
-  improve isolation and security respect to OS that hosts more
-  applications
+  improve isolation and security respect to OS that hosts more applications (as shown in figure 3.1)
 \end{itemize}
-
-Under the hood, Docker Engine it's composed mainly by a Git\footnote{https://www.git-scm.com/}-like command
-line interface, a daemon and \textit{libcontainer}, a library that use
-Linux kernel capabilities such as \textit{namespaces} and \textit{cgroups}.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics{media/ch3-docker.png}
-\caption{Overview of Docker Engine}
-\end{figure}
 
 \begin{figure}[htbp]
 \centering
 \includegraphics{media/ch3-docker_multiapps.png}
 \caption{Performance and Isolation in Multiapps Deployment}
+\end{figure}
+
+Under the hood, Docker Engine it's composed mainly by a Git\footnote{https://www.git-scm.com/}-like command
+line interface, a daemon and \textit{libcontainer}, a library that use
+Linux kernel capabilities such as \textit{namespaces} and \textit{cgroups}, as shown in figure 3.2.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics{media/ch3-docker.png}
+\caption{Overview of Docker Engine}
 \end{figure}
 
 Someone sees containers more as ``lightweight VMs'', so has been
@@ -203,6 +202,8 @@ Since an application is splitted in more well-defined components, there is also 
 For this target has been chosen Docker Compose\footnote{https://docs.docker.com/compose/}, a basic tool to deploy applications in development, similar to Vagrant for VMs. Docker Compose will resolve the dependency graph of components and linked them together. While Docker Engine provides the core capabilities, Docker Compose represent the tool developers use the majority of time.
 
 Following the docker-compose.yml reference\footnote{https://docs.docker.com/compose/yml/}, the containers was orchestrated (only for development) with Docker Compose. So running the whole application is simple as run \texttt{docker-compose up} command!
+
+Figures 3.4 and 3.5 show respectively the legacy version of Gasista Felice, a de-facto monolith application running inside Debian, and the refreshed ones with a strict separation between components.
 
 \begin{figure}[htbp]
 \centering

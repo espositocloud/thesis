@@ -27,6 +27,8 @@ resource cluster manager. At the end, Logspout (built-in in recent
 versions of Heka) will be used for gathering logs from all running
 containers.
 
+Figure 6.1 shows an overview of the whole monitoring system.
+
 \begin{figure}[htbp]
 \centering
 \includegraphics{media/ch6-overview.png}
@@ -139,7 +141,7 @@ Heapster is deployed as \texttt{replicationController}, a \texttt{service} and a
 
 \textit{Heka} is a framework developed by Mozilla for easy data collection and processing. Heka is modular and supports mainly 6 different type of plugins: inputs, splitters, decoders, filters, encoders and outputs. The first 3 are for gather and parse incoming data to \textit{Heka Message} standard, the filters parse all these messages and the later 2 is for encoding and sending data somewhere else, for storing or further processing.
 
-Heka permits to logs parsing, filtering, structuring them and send to InfluxDB. In this example will use Gasista Felice's NGiNX component for generating logs and \textit{boom} for doing a lot of requests.
+Heka permits to logs parsing, filtering, structuring them and send to InfluxDB. In this example will be used Gasista Felice's NGiNX component for generating logs and \textit{boom} for doing a lot of requests.
 
 \begin{figure}[htbp]
 \centering
@@ -147,11 +149,7 @@ Heka permits to logs parsing, filtering, structuring them and send to InfluxDB. 
 \caption{The Heka Data Flow}
 \end{figure}
 
-The input part is composed by the \textit{Docker Log Input}, build on top of \textit{Logspout} that acquires stdout/stderr of running containers from the Docker Engine Unix socket, and \textit{NGiNX access} and \textit{error decoders}.
-
-Filtering consist of \textit{HTTP Status Graph} that filter NGiNX access logs and generate an HTTP response code based graph.
-
-The output part is composed by encoding in \textit{InfluxDB schema} and sending data to \textit{InfluxDB HTTP APIs}.
+As shown in figure 6.2, the input part is composed by the \textit{Docker Log Input}, build on top of \textit{Logspout} that acquires stdout/stderr of running containers from the Docker Engine Unix socket, and \textit{NGiNX access} and \textit{error decoders}.  Filtering consist of \textit{HTTP Status Graph} that filter NGiNX access logs and generate an HTTP response code based graph.  Finally the output part is composed by encoding in \textit{InfluxDB schema} and sending data to \textit{InfluxDB HTTP APIs}.
 
 Heka is deployed on top of OpenShift as a simple \texttt{replicationController}.
 
@@ -164,6 +162,8 @@ Grafana is a metrics dashboard and graph editor, born as fork of Kibana in the b
 \includegraphics{media/ch6-influxdb.png}
 \caption{InfluxDB logs dashboard}
 \end{figure}
+
+Figure 6.3 shows structured logs from InfluxDB dashboard, that have been queried from Grafana dashboard.
 
 The first 2 graphs in Grafana dashboard show data derived from logs processing, while the last 2 from Heapster:
 
@@ -183,6 +183,8 @@ select derivative(value) from "cpu/usage_ns_cumulative" \
 select value from "memory/usage_bytes_gauge" \
     where container_name="back"
 \end{verbatim}
+
+Figure 6.4 shows the graphical results of these queries.
 
 \begin{figure}[htbp]
 \centering
