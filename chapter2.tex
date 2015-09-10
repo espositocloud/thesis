@@ -121,7 +121,7 @@ at SaaS:
 \item Admin processes:  Run admin/management tasks as one-off processes
 \end{enumerate}
 
-12factor separate clearly development and operations through a contract, and represent the beginning of DevOps era. Other PaaS shared and was born on top of these principles, such as Deis\footnote{http://deis.io/} or OpenShift.
+12factor separate clearly development and operations through a contract, and represent the beginning of DevOps\cite{Adopting DevOps Practices in Quality Assurance} era. Other PaaS shared and was born on top of these principles, such as Deis\footnote{http://deis.io/} or OpenShift.
 
 In a DevOps context there are usually at least these components:
 
@@ -213,7 +213,7 @@ applications are deployed. In fact, working on VMs is logically
 equivalent, with a little of overhead.
 
 At the beginning of 2013, was announced Docker, a \textit{container}
-runtime (https://www.docker.com/whatisdocker) that aims to be the unit
+runtime\cite{Docker: Lightweight Linux Containers for Consistent Development and Deployment} that aims to be the unit
 of launching application components, running reproducible environments,
 and conceived for developers friendly via Git-like CLI. Containers
 doesn't offer all the isolation of VMs, but reduces the overhead and
@@ -320,41 +320,35 @@ Containers\tabularnewline
 \bottomrule
 \end{longtable}
 
-The solution provided is a Proof of Concept (PoC), thought beyond academic purpose for future real use, of a pre-configured free/libre toolset that enables IT operators to build a PaaS on top of a IaaS/cloud infrastructure, who aims to be optimal for scaling microservices, and DevOps-oriented via CD and container as the atomic unit.
+The solution provided is a \textit{Proof of Concept} (PoC), thought beyond academic purpose for future real use, of a pre-configured free/libre toolset that enables IT operators to build a PaaS on top of a IaaS/cloud infrastructure, who aims to be optimal for container as the atomic unit, scaling microservices, and DevOps-oriented via CD.  In addition, the context regards a small company with reduced engineering resources.
 
-Has been follow some guidelines:
+Beyond these core considerations, additional guidelines has been followed:
 
 \begin{itemize}
 \item elasticity;
-\item lightweight (should not occupy too much resources, compiled languages
-  over interpreted ones);
-\item reuse pre-existent components (don't reinvent the wheel);
-\item reuse pre-existent network layers (avoid dedicated transport layer via agents/daemons, to install/configure/manage/update, and more surface attack);
-\item composable pieces with simple interface over monolith;
-\item convention over configuration: by default it should works (quite)  out-of-the-box, but remain customizable (low entry wall);
-\item automation everywhere possible, few manual commands to install/deploy;
-\item avoid tools requires programming language or custom syntax for configuration
-\item stay on shoulders of giants (avoid too small community and risk to adopt tools without a solid/active contributor community);
-\item minimize external dependencies;
+\item lightweight: should not occupy too much resources, compiled languages over interpreted ones;
+\item reuse pre-existent components: don't reinvent the wheel;
+\item reuse pre-existent network layers: avoid dedicated transport layer in order to minimize further management and reducing the surface attack;
+\item microservices architecture: composable pieces with simple interface over monolith;
+\item convention over configuration: by default it should works out-of-the-box;
+\item automated bootstrapping for lowering the entry wall;
+\item avoid tools requires programming language or custom syntax for configuration;
+\item stay on shoulders of giants: avoid too small community and risk to adopt tools without a solid/active contributor community;
+\item minimize external dependencies at runtime;
 \item low dependency from IaaS for (future) private cloud.
-\end{itemize}
-
-There are recent similar projects that should be quoted for completeness:
-
-\begin{itemize}
-\item Apollo\footnote{https://github.com/Capgemini/Apollo} from Capgemini, an open-source platform for   apps, microservices and big data. It consists of Mesos cluster   provisioning and orchestration using Packer\footnote{https://packer.io/} and Terraform;
-\item MANTL\footnote{https://github.com/CiscoCloud/microservices-infrastructure} from Cisco Cloud, formerly \textit{Microservices Infrastructure}, is a modern platform for rapidly   deploying globally distributed services.
 \end{itemize}
 
 With these goals in mind, the following toolset has been chosen:
 
 \begin{itemize}
-\item Terraform: Infrastructure Provisioning
-\item Docker Engine: Container Runtime
-\item CoreOS: GNU/Linux distribution for containers
-\item Kubernetes: Container Cluster Orchestration
-\item OpenShift v3: PaaS for modern workflow
+\item Terraform: IaaS provisioning, covering the lower layer of this stack
+\item CoreOS, the operating system optimized for running  containers
+\item Docker Engine, the container runtime for components of applications
+\item Kubernetes extends CoreOS and Docker adding cluster scheduling and orchestration, and providing a cluster abstraction to upper level
+\item OpenShift v3, on top of this stack, reaches the PaaS abstraction level providing container services and workflow for developers
 \end{itemize}
+
+At the end, there is Gasista Felice as use case application running on top of this platform.
 
 Figure 2.5 shows the current state of art on left side, and the proposed solution on the right side, covering from IaaS to SaaS abstraction levels.
 
@@ -363,3 +357,10 @@ Figure 2.5 shows the current state of art on left side, and the proposed solutio
 \includegraphics{media/ch2-solution.png}
 \caption{From current state of art to a modern solution}
 \end{figure}
+
+In last months have been published interesting and similar projects for larger use cases, that should be quoted for completeness:
+
+\begin{itemize}
+\item Apollo\footnote{https://github.com/Capgemini/Apollo} from Capgemini, an open-source platform for   apps, microservices and big data. It consists of Mesos cluster   provisioning and orchestration using Packer\footnote{https://packer.io/} and Terraform;
+\item MANTL\footnote{https://github.com/CiscoCloud/microservices-infrastructure} from Cisco Cloud, formerly \textit{Microservices Infrastructure}, is a modern platform for rapidly   deploying globally distributed services.
+\end{itemize}
