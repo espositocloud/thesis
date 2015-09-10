@@ -1,79 +1,48 @@
 \chapter{Introduction}\label{introduction}
 
-Today there is the \emph{cloud}, where some kind of services are
-delegated by third-party providers. There are structured mainly 3
-different kind of services, depends on abstraction level:
+When the Internet and the Web started to spread all over the world, a first era of cloud computing\footnote{Cloud computing is a model for enabling ubiquitous network access to a shared pool of configurable computing resources.
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  \emph{Infrastructure as a Service} (IaaS) for raw compute, network,
-  storage and other low-level needs
-\item
-  \emph{Platform as a Service} (PaaS) for running applications by
-  software developers
-\item
-  \emph{Software as a Service} (SaaS) for provide applications to end
-  users
-\end{itemize}
+Cloud computing and storage solutions provide users and enterprises with various capabilities to store and process their data in third-party data centers. It relies on sharing of resources to achieve coherence and economies of scale, similar to a utility (like the electricity grid) over a network. At the foundation of cloud computing is the broader concept of converged infrastructure and shared services.
 
+Source: Cloud Computing on Wikipedia\cite{CloudComputing}
+
+\textit{Infrastructure as a Service} (IaaS) for raw compute, network, storage and other low-level needs
+\textit{Platform as a Service} (PaaS) for running applications by software developers
+\textit{Software as a Service} (SaaS) for provide applications to end users
+  
 Anyway, even if cloud resoles a necessity sometimes there is the need of
-avoid \emph{outsourcing}, or using directly cloud technologies for
+avoid \textit{outsourcing}, or using directly cloud technologies for
 providing services to customers.
 
-\section{Goal}\label{goal}
+From users perspective, cloud is knows mainly as Software as a Service (SaaS), that consist of use social networks, email, photo sharing, etc. but there are also other cloud services intended for use from software engineers such as Platform as a Service (PaaS) and Infrastructure as a Service (IaaS).
 
-Luckily, today there is a vast availability of free software for
-reproduce some cloud services.
+For example, load in real world is not constant but vary a lot depend on clock, day of week, holidays, special events, so it's crucial be prepared to high heavy load, but without waste resources. This requires a capability to add or remove resources dynamically accordingly of actual (or expected) load. The requirements of cloud solutions regards scalability with increasing the connected devices, flexibility, velocity in delivering new features, scalability in building and deploying applications. So several concepts need to be rethought in order to accomplish the requirements.
 
-Starting from an overview of software development, systems management,
-software architectures and application environments, it will be provided
-some guidelines and researched existing available solutions, with the
-goal of following the process of PaaS management built on top of an
-IaaS, in a modern and scalable way, guaranteeing the governance through
-monitoring.
+} emerged for offering services like mail exchange and search engines.  In last decade,  the exponential increment of connections, connected devices and people led to the need of services for collaborative work and of data synchronization between more devices, introducing new challenges.
 
-The final goal is providing SaaS through a suitable environment for
-running applications. For this purpose, it will be used an application
-as case of study: \emph{Gasista Felice}.
+Today cloud computing technologies are driving the evolution of IT\footnote{Information Technology} on several points of views, leading to modern ways of managing software development and deployments processes, but also of the application architectures their own.
 
-This solution will integrate:
+Since usually the evolution proceeds in gradual steps, most of current solutions are generally too bounded to past paradigms, and doesn't fix current necessities in an clear and elegant way, making the management an over-complex task, and reducing the scaling potential of applications.  Other solutions are proprietary, so they are not publicly available and doesn't contribute, at least directly, to innovation and progress.
 
-\begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  configuration of a IaaS
-\item
-  describing in a declarative way the PaaS resources
-\item
-  monitoring and benchmarking the live management of the whole platform
-  when the application will be in execution
-\end{itemize}
+Recently cloud computing saw a big step forward thanks to containers as the atomic unit of cloud platforms.  In addition, Google embraced this emerging industrial container standard, adding its around 10 years of experience in managing container in production, providing a container orchestration as core tool for managing whole applications at scale.
 
-The examined and studied solution covers the current state of art, in
-particular consists of \emph{Kubernetes} developed from Google's
-Engineers, RedHat's \emph{OpenShift}, but also \emph{CoreOS} from the
-namesake company, and HashiCorp's \emph{Terraform}.
+This work proposes a radical step forward, reusing the growing ecosystem of free software built around containers, for providing a platform (in the PaaS way) on top of an existing cloud infrastructure, with the goal of provide a suitable environment for running applications in a modern and scalable way.  In particular the proposed platform aims to cover the management of platform itself, as a lightweight approach for a small company.  The examined and studied solution mainly includes projects like Docker\footnote{https://www.docker.com/docker-engine} and CoreOS\footnote{https://coreos.com/} by the namesake companies, Kubernetes\footnote{http://kubernetes.io/} developed by Google's Engineers, RedHat's OpenShift\footnote{http://www.openshift.org/} and HashiCorp's Terraform\footnote{https://terraform.io/}, but also InfluxDB\footnote{https://influxdb.com/}, Heka\footnote{http://hekad.readthedocs.org/} and Grafana\footnote{http://grafana.org/} as monitoring stack, and other minor projects.
 
-All the project comes as free software and are released on the GitHub
-portal.
+In addition, will be  containerized a legacy application, \textit{Gasista Felice}, and ran it on top of that platform providing scalability analysis and some benchmarks.
+
+This project proved that a clear and modern solution could be used for deploying common applications in a small environment, providing all the necessary for management, scaling and guaranteeing the governance through monitoring.  Finally, the project has been developed as multiple sub-projects publicly released as free software on the GitHub\footnote{https://github.com/} portal.
 
 \section{Organization}\label{organization}
 
-Chapter 2 introduces the working environment in which this thesis was
-born and the technological context for which was conceived.
+Chapter 2 introduces the working environment in which this thesis was born and the relative technological context.
 
-Chapter 3 introduces containers' core concepts and the application to
-the use case.
+Chapter 3 introduces some container core concepts, then exemplified their application in a specific use case.
 
-Chapter 4 describes how to bootstrap a IaaS/PaaS providing a production
-environment.
+Chapter 4 describes how to bootstrap a IaaS/PaaS in order to provide a production environment.
 
-Chapter 5 describes the stack of PaaS showing how applications could
-take advantage on it.
+Chapter 5 describes the stack of PaaS showing how applications could take advantage of it.
 
 Chapter 6 shows how to control, monitor, analyze, and visualize data
 about applications.
 
-Chapter 7 does a summary of this experience, and present some potential
-evolution of this project in order to achieve further targets.
+Chapter 7 tries to draw conclusions about the entire work, and presents some potential developments of this project in order to achieve further targets.
