@@ -1,24 +1,6 @@
-# Thesis
+## Thesis
 
-Title: **Containerizing The Cloud For Managing Applications At Scale**
-
-View the PDF [here](https://www.overleaf.com/read/jkmzpbfrkyds)
-
-## Done
-
-Platform (general):
-
-* infrastructure provisioning with Terraform on a cloud provider (Digital Ocean)
-* cluster based on CoreOS, Kubernetes and OpenShift
-* monitoring stack
-
-Gasista Felice (specific):
-
-* split and containerize Gasista Felice in components with Docker Engine
-* development environment with Docker Compose
-* staging/production environment with OpenShift
-* log parsing + data visualization on charts
-* benchmarks
+[Download](https://github.com/kobe25/thesis/raw/master/thesis.pdf) or [view](https://github.com/kobe25/thesis/blob/master/thesis.pdf) the PDF.
 
 ## Related repositories
 
